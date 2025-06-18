@@ -1,5 +1,7 @@
 package com.project.mukchoice.model.place
 
+import com.project.mukchoice.consts.PlaceCategory
+
 data class PlaceDto(
     val id: String,
     val placeName: String,
@@ -15,7 +17,9 @@ data class PlaceDto(
     var thumbnailUrl: String?,
     val distance: String?,
     val totalCount: Int? = null,
-    val isEnd: Boolean? = null
+    val isEnd: Boolean? = null,
+    var placeCategory: PlaceCategory? = null,
+    var isWish: Boolean? = null,
 ) {
     companion object {
         fun fromDocument(document: Document): PlaceDto {
@@ -31,7 +35,7 @@ data class PlaceDto(
                 x = document.x,
                 y = document.y,
                 placeUrl = document.place_url,
-                thumbnailUrl = null, // sumnailUrl is not present in Document, set to null or handle accordingly
+                thumbnailUrl = null,
                 distance = document.distance
             )
         }

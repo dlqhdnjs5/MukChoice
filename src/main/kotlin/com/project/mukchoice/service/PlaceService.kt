@@ -3,10 +3,8 @@ package com.project.mukchoice.service
 import com.project.mukchoice.consts.PlaceCategory
 import com.project.mukchoice.manager.ChromeDriverManager
 import com.project.mukchoice.manager.HttpWebClientManager
-import com.project.mukchoice.model.place.Document
-import com.project.mukchoice.model.place.KakaoImageSearchResponse
-import com.project.mukchoice.model.place.KakaoKeywordSearchPlaceResponse
-import com.project.mukchoice.model.place.PlaceDto
+import com.project.mukchoice.model.place.*
+import com.project.mukchoice.repository.PlaceRepository
 import kotlinx.coroutines.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -16,12 +14,22 @@ import org.springframework.stereotype.Service
 class PlaceService(
     @Value("\${kakao.rest.api.key}") val kakaoRestApiKey: String,
     private val httpWebClientManager: HttpWebClientManager,
-    private val chromeDriverManager: ChromeDriverManager
+    private val chromeDriverManager: ChromeDriverManager,
+    private val placeRepository: PlaceRepository,
 ) {
     companion object {
         private const val RADIUS = 1000
         private const val SIZE = 10
     }
+
+    /**
+     * 카카오 키워드 검색 API를 사용하여 장소를 검색
+     * @param coordinateX X 좌표
+     * @param coordinateY Y 좌표
+     * @param query 검색어 (PlaceCategory)
+     * @param page 페이지 번호
+     * @return 검색된 장소 리스트
+     */
     fun searchPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?, page: Int): List<Document>? {
         val actualQuery = query?.displayName ?: PlaceCategory.ALL.displayName
         val url = "https://dapi.kakao.com/v2/local/search/keyword?" +
@@ -32,6 +40,28 @@ class PlaceService(
 
         try {
             return httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)?.documents
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching for places: ${e.message}", e)
+        }
+    }
+
+    /**
+     * 좌표, 가게명으로 가게 존재여부 체크 및 조회
+     * @param coordinateX X 좌표
+     * @param coordinateY Y 좌표
+     * @param query 가게명
+     * @return 검색된 장소 리스트
+     */
+    fun searchPlace(coordinateX: String, coordinateY: String, query: String): Document? {
+        val radius = 5
+        val url = "https://dapi.kakao.com/v2/local/search/keyword?" +
+                "query=${query}&x=${coordinateX}&y=${coordinateY}&radius=${radius}&page=1&size=1"
+        val headers = HttpHeaders().apply {
+            add("Authorization", "KakaoAK $kakaoRestApiKey")
+        }
+
+        try {
+            return httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)?.documents?.get(0)
         } catch (e: Exception) {
             throw IllegalStateException("Error occurred while searching for places: ${e.message}", e)
         }
@@ -93,4 +123,23 @@ class PlaceService(
             }
         } ?: PlaceDto.fromDocument(place)
     }
+
+    fun savePlace(placeDto: PlaceDto): PlaceEntity {
+        val placeId = placeDto.id.toLong()
+        val existing = placeRepository.findById(placeId)
+        if (existing != null) return existing
+        val entity = PlaceEntity(
+            id = placeId,
+            placeName = placeDto.placeName,
+            placeCategory = placeDto.placeCategory!!,
+            phone = placeDto.phone,
+            addressName = placeDto.addressName,
+            roadAddressName = placeDto.roadAddressName,
+            x = placeDto.x.toDouble(),
+            y = placeDto.y.toDouble(),
+            placeUrl = placeDto.placeUrl
+        )
+        return placeRepository.save(entity)
+    }
+
 }
