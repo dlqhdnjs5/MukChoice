@@ -15,7 +15,7 @@ data class PlaceDto(
     val y: String,
     val placeUrl: String,
     var thumbnailUrl: String?,
-    val distance: String?,
+    var distance: String?,
     val totalCount: Int? = null,
     val isEnd: Boolean? = null,
     var placeCategory: PlaceCategory? = null,
@@ -39,6 +39,27 @@ data class PlaceDto(
                 distance = document.distance
             )
         }
+
+        fun fromEntity(entity: PlaceEntity): PlaceDto {
+            return PlaceDto(
+                id = entity.id.toString(),
+                placeName = entity.placeName,
+                categoryName = entity.placeCategory.name,
+                categoryGroupCode = null,
+                categoryGroupName = null,
+                phone = entity.phone,
+                addressName = entity.addressName,
+                roadAddressName = entity.roadAddressName,
+                x = entity.x.toString(),
+                y = entity.y.toString(),
+                placeUrl = entity.placeUrl,
+                thumbnailUrl = null,
+                distance = null,
+                totalCount = null,
+                isEnd = null,
+                placeCategory = entity.placeCategory,
+                isWish = null
+            )
+        }
     }
 }
-

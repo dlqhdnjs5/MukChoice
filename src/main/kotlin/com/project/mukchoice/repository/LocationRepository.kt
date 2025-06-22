@@ -39,4 +39,11 @@ class LocationRepository(
             .resultList.firstOrNull()
     }
 
+    fun findLocationByLocationNo(locationNo: Int): LocationEntity? {
+        val jpql = "SELECT location FROM LocationEntity location WHERE location.locationNo = :locationNo"
+        return entityManager.createQuery(jpql, LocationEntity::class.java)
+            .setParameter("locationNo", locationNo)
+            .resultList.firstOrNull()
+    }
+
 }

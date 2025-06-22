@@ -30,4 +30,29 @@ class WishRepository(
             .setParameter("placeId", placeId)
             .executeUpdate()
     }
+
+    fun findByUserNoWithPaging(userNo: Int, offset: Int, limit: Int): List<WishEntity> {
+        val query = "SELECT w FROM WishEntity w WHERE w.userNo = :userNo ORDER BY w.regTime DESC"
+        return entityManager.createQuery(query, WishEntity::class.java)
+            .setParameter("userNo", userNo)
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .resultList
+    }
+
+    fun findByUserNoWithPagingWithPlace(userNo: Int, offset: Int, limit: Int): List<WishEntity> {
+        val query = "SELECT w FROM WishEntity w WHERE w.userNo = :userNo ORDER BY w.regTime DESC"
+        return entityManager.createQuery(query, WishEntity::class.java)
+            .setParameter("userNo", userNo)
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .resultList
+    }
+
+    fun countByUserNo(userNo: Int): Long {
+        val query = "SELECT COUNT(w) FROM WishEntity w WHERE w.userNo = :userNo"
+        return entityManager.createQuery(query, java.lang.Long::class.java)
+            .setParameter("userNo", userNo)
+            .singleResult.toLong()
+    }
 }

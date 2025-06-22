@@ -1,12 +1,7 @@
 package com.project.mukchoice.model.place
 
 import com.project.mukchoice.consts.PlaceCategory
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
@@ -16,10 +11,10 @@ import java.time.LocalDateTime
 class PlaceEntity(
     @Id
     @Column(name = "id")
-    val id: Long,
+    var id: Long,
 
     @Column(name = "place_name", length = 100, nullable = false)
-    val placeName: String,
+    var placeName: String,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "place_category", length = 100, nullable = false)
@@ -49,5 +44,5 @@ class PlaceEntity(
 
     @UpdateTimestamp
     @Column(name = "mod_time", nullable = false)
-    val modTime: LocalDateTime? = null
+    val modTime: LocalDateTime? = null,
 )
