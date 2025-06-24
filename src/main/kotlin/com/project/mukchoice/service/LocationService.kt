@@ -71,4 +71,13 @@ class LocationService(
         locationRepository.updateLocation(locationEntity)
     }
 
+    fun getCurrentLocationByUserNo(userNo: Int): LocationEntity {
+        val locations = getLocationsByUserNo(userNo)
+        return locations.firstOrNull { it.isSelected }
+            ?: throw IllegalArgumentException("No selected location found for user")
+    }
+
+    fun getLocationByLocationNo(locationNo: Int): LocationEntity? {
+        return locationRepository.findLocationByLocationNo(locationNo)
+    }
 }

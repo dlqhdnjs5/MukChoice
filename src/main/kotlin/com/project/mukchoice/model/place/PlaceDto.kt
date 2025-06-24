@@ -1,5 +1,7 @@
 package com.project.mukchoice.model.place
 
+import com.project.mukchoice.consts.PlaceCategory
+
 data class PlaceDto(
     val id: String,
     val placeName: String,
@@ -13,9 +15,11 @@ data class PlaceDto(
     val y: String,
     val placeUrl: String,
     var thumbnailUrl: String?,
-    val distance: String?,
+    var distance: String?,
     val totalCount: Int? = null,
-    val isEnd: Boolean? = null
+    val isEnd: Boolean? = null,
+    var placeCategory: PlaceCategory? = null,
+    var isWish: Boolean? = null,
 ) {
     companion object {
         fun fromDocument(document: Document): PlaceDto {
@@ -31,10 +35,31 @@ data class PlaceDto(
                 x = document.x,
                 y = document.y,
                 placeUrl = document.place_url,
-                thumbnailUrl = null, // sumnailUrl is not present in Document, set to null or handle accordingly
+                thumbnailUrl = null,
                 distance = document.distance
+            )
+        }
+
+        fun fromEntity(entity: PlaceEntity): PlaceDto {
+            return PlaceDto(
+                id = entity.id.toString(),
+                placeName = entity.placeName,
+                categoryName = entity.placeCategory.name,
+                categoryGroupCode = null,
+                categoryGroupName = null,
+                phone = entity.phone,
+                addressName = entity.addressName,
+                roadAddressName = entity.roadAddressName,
+                x = entity.x.toString(),
+                y = entity.y.toString(),
+                placeUrl = entity.placeUrl,
+                thumbnailUrl = null,
+                distance = null,
+                totalCount = null,
+                isEnd = null,
+                placeCategory = entity.placeCategory,
+                isWish = null
             )
         }
     }
 }
-
