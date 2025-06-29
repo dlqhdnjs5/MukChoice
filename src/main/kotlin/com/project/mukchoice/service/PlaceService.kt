@@ -19,7 +19,28 @@ class PlaceService(
 ) {
     companion object {
         private const val RADIUS = 1000
-        private const val SIZE = 10
+        private const val SIZE = 15
+    }
+    /**
+     * searchPlace를 사용하여 is_end가 true가 될 때까지 여러 페이지를 반복 조회하는 함수, 최대 10번 허용
+     * @param coordinateX X 좌표
+     * @param coordinateY Y 좌표
+     * @param query 가게명
+     * @return 모든 Document 리스트
+     */
+    fun searchPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?): List<Document> {
+        val actualQuery = query?.displayName ?: throw IllegalArgumentException("Query must not be null")
+        return searchPlacesWithPagination { page ->
+            "https://dapi.kakao.com/v2/local/search/keyword?" +
+                    "query=${actualQuery} &x=${coordinateX}&y=${coordinateY}&radius=${RADIUS}&page=${page}&size=${SIZE}"
+        }
+    }
+
+    fun searchAllPlaces(coordinateX: String, coordinateY: String): List<Document> {
+        return searchPlacesWithPagination { page ->
+            "https://dapi.kakao.com/v2/local/search/category?" +
+                    "category_group_code=FD6&x=${coordinateX}&y=${coordinateY}&radius=${RADIUS}&page=${page}&size=${SIZE}"
+        }
     }
 
     /**
@@ -88,9 +109,13 @@ class PlaceService(
     }
 
     fun getPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?, page: Int): List<PlaceDto> {
-        return searchPlaces(coordinateX, coordinateY, query, page)
-            ?.mapNotNull { it?.let { PlaceDto.fromDocument(it) } }
-            ?: emptyList()
+        if (query == PlaceCategory.ALL || query == null) {
+            return searchAllPlaces(coordinateX, coordinateY)
+                .map { PlaceDto.fromDocumentByCategory(it, PlaceCategory.ALL)  }
+        }
+
+        return searchPlaces(coordinateX, coordinateY, query)
+            .map { PlaceDto.fromDocumentByCategory(it, query) }
     }
 
     /**
@@ -113,6 +138,39 @@ class PlaceService(
             }.awaitAll()
         }
     }
+
+    /**
+     * 카카오 키워드 검색 API를 사용하여 장소를 여러 페이지에 걸쳐 검색
+     */
+    private fun searchPlacesWithPagination(createUrl: (Int) -> String): List<Document> {
+        val allDocuments = mutableListOf<Document>()
+        var page = 1
+        var isEnd = false
+        var callCount = 0
+        val maxCalls = 10
+
+        do {
+            if (callCount++ >= maxCalls) break
+
+            val url = createUrl(page)
+            val headers = HttpHeaders().apply {
+                add("Authorization", "KakaoAK $kakaoRestApiKey")
+            }
+
+            val response = try {
+                httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)
+            } catch (e: Exception) {
+                throw IllegalStateException("Error occurred while searching for places: " + e.message, e)
+            }
+
+            response?.documents?.let { allDocuments.addAll(it) }
+            isEnd = response?.meta?.is_end ?: true
+            page++
+        } while (!isEnd)
+
+        return allDocuments
+    }
+
 
     private suspend fun fetchPlaceDtoWithThumbnail(place: Document): PlaceDto = withContext(Dispatchers.IO) {
         delay(200)
