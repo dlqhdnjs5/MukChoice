@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service
 @Service
 class WishService(
     private val wishRepository: WishRepository,
-    private val placeRepository: PlaceRepository
 ) {
     fun saveWish(userNo: Int, placeId: Long) {
         val wish = WishEntity(userNo = userNo, placeId = placeId)

@@ -48,6 +48,30 @@ class PlaceFacade(
         return PlaceResponse(places)
     }
 
+    fun getPlacesMultiCategory(coordinateX: String, coordinateY: String, queries: List<PlaceCategory>?, page: Int): PlaceResponse {
+        val userInfo = ContextHolder.getUserInfoWithCheck()
+
+        if (queries.isNullOrEmpty() || queries[0] == PlaceCategory.ALL) {
+            val result =  placeService.searchAllPlaces(coordinateX, coordinateY)
+                .map { PlaceDto.fromDocumentByCategory(it, PlaceCategory.ALL) }
+
+            return PlaceResponse(result)
+        }
+
+        val allPlaces = mutableListOf<PlaceDto>()
+        for (query in queries) {
+            val places = placeService.getPlaces(coordinateX, coordinateY, query, page)
+            allPlaces.addAll(places)
+        }
+
+        val uniquePlaces = allPlaces.distinctBy { it.id }
+        uniquePlaces.forEach { place ->
+            place.isWish = wishService.existsWish(userInfo.userNo!!, place.id.toLong())
+        }
+
+        return PlaceResponse(uniquePlaces)
+    }
+
     @Transactional
     fun addWishList(addWishListRequest: AddWishListRequest) {
         val userInfo = ContextHolder.getUserInfoWithCheck()
@@ -58,10 +82,7 @@ class PlaceFacade(
             throw IllegalArgumentException("존재하지 않는 장소입니다.")
         }
 
-        val placeDto = PlaceDto.fromDocument(document).apply {
-            this.placeCategory = addWishListRequest.placeCategory
-        }
-
+        val placeDto = PlaceDto.fromDocumentByCategory(document, addWishListRequest.placeCategory)
         placeService.savePlace(placeDto)
         wishService.updateWish(
             userNo = userInfo.userNo!!,
