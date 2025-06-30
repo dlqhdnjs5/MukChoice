@@ -35,6 +35,12 @@ class PlaceEntity(
     @Column(nullable = false)
     val y: Double,
 
+    @Column(nullable = false)
+    val bcode: String,
+
+    @Column(nullable = false)
+    val dong: String,
+
     @Column(name = "place_url", length = 500, nullable = false)
     val placeUrl: String,
 

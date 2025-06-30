@@ -5,8 +5,8 @@ import com.project.mukchoice.model.location.LocationEntity
 import com.project.mukchoice.model.place.AddWishListRequest
 import com.project.mukchoice.model.place.PlaceDto
 import com.project.mukchoice.model.place.PlaceResponse
+import com.project.mukchoice.model.wish.WishDongInfoResponse
 import com.project.mukchoice.model.wish.WishDto
-import com.project.mukchoice.model.wish.WishEntity
 import com.project.mukchoice.model.wish.WishListResponse
 import com.project.mukchoice.service.LocationService
 import com.project.mukchoice.service.PlaceService
@@ -48,11 +48,16 @@ class PlaceFacade(
         return PlaceResponse(places)
     }
 
-    fun getPlacesMultiCategory(coordinateX: String, coordinateY: String, queries: List<PlaceCategory>?, page: Int): PlaceResponse {
+    fun getPlacesMultiCategory(
+        coordinateX: String,
+        coordinateY: String,
+        queries: List<PlaceCategory>?,
+        page: Int
+    ): PlaceResponse {
         val userInfo = ContextHolder.getUserInfoWithCheck()
 
         if (queries.isNullOrEmpty() || queries[0] == PlaceCategory.ALL) {
-            val result =  placeService.searchAllPlaces(coordinateX, coordinateY)
+            val result = placeService.searchAllPlaces(coordinateX, coordinateY)
                 .map { PlaceDto.fromDocumentByCategory(it, PlaceCategory.ALL) }
 
             return PlaceResponse(result)
@@ -75,31 +80,49 @@ class PlaceFacade(
     @Transactional
     fun addWishList(addWishListRequest: AddWishListRequest) {
         val userInfo = ContextHolder.getUserInfoWithCheck()
-        val document = placeService.searchPlace(addWishListRequest.x, addWishListRequest.y, addWishListRequest.placeName)
-            ?: throw IllegalArgumentException("해당 장소가 존재하지 않습니다.")
+        val document =
+            placeService.searchPlace(addWishListRequest.x, addWishListRequest.y, addWishListRequest.placeName)
+                ?: throw IllegalArgumentException("해당 장소가 존재하지 않습니다.")
 
         if (addWishListRequest.placeId != document.id) {
             throw IllegalArgumentException("존재하지 않는 장소입니다.")
         }
 
+        val currentLocation = locationService.getCurrentLocationByUserNo(userInfo.userNo!!)
+            ?: throw IllegalArgumentException("현재 위치 정보가 없습니다. 위치를 설정해주세요.")
         val placeDto = PlaceDto.fromDocumentByCategory(document, addWishListRequest.placeCategory)
+            .apply {
+                this.bcode = currentLocation.bcode
+                this.dong = currentLocation.dong
+            }
         placeService.savePlace(placeDto)
         wishService.updateWish(
-            userNo = userInfo.userNo!!,
+            userNo = userInfo.userNo,
             placeId = placeDto.id.toLong(),
             isWish = addWishListRequest.isWish
         )
     }
 
-    fun getWishList(offset: Int, limit: Int, currentLocationNo: Int?): WishListResponse {
+    fun getWishList(offset: Int, limit: Int, currentLocationNo: Int?, bcode: String): WishListResponse {
         val userInfo = ContextHolder.getUserInfoWithCheck()
         val userNo = userInfo.userNo ?: throw IllegalArgumentException("User not found")
 
-        val wishListWithTotal: Pair<List<WishEntity>, Long> = wishService.getWishListWithTotalCount(
-            userNo = userNo,
-            offset = offset,
-            limit = limit
-        )
+        // bcode가 "All"이 아니고 값이 존재한다면 DB에서 바로 필터링하여 조회
+        val wishListWithTotal = if (!bcode.isNullOrEmpty() && bcode.lowercase() != "all") {
+            wishService.getWishListByBcodeWithTotalCount(
+                userNo = userNo,
+                bcode = bcode,
+                offset = offset,
+                limit = limit
+            )
+        } else {
+            wishService.getWishListWithTotalCount(
+                userNo = userNo,
+                offset = offset,
+                limit = limit
+            )
+        }
+
         val wishList = wishListWithTotal.first
         val total = wishListWithTotal.second
 
@@ -137,5 +160,11 @@ class PlaceFacade(
             wishList = dtoList,
             total = total
         )
+    }
+
+    fun getWishDongList(): WishDongInfoResponse {
+        val userInfo = ContextHolder.getUserInfoWithCheck()
+        val wishDongInfos = wishService.getWishDongList(userInfo.userNo!!)
+        return WishDongInfoResponse(wishDongInfos)
     }
 }

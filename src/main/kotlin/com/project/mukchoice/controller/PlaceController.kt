@@ -4,6 +4,7 @@ import com.project.mukchoice.consts.PlaceCategory
 import com.project.mukchoice.facade.PlaceFacade
 import com.project.mukchoice.model.place.AddWishListRequest
 import com.project.mukchoice.model.place.PlaceResponse
+import com.project.mukchoice.model.wish.WishDongInfoResponse
 import com.project.mukchoice.model.wish.WishListResponse
 import org.springframework.web.bind.annotation.*
 
@@ -86,7 +87,16 @@ class PlaceController(
      */
     @GetMapping("/wishes")
     fun getWishList(@RequestParam offset: Int = 0,@RequestParam limit: Int = 20, @RequestParam(required = false, defaultValue = "1") currentLocationNo: Int?
-    ): WishListResponse {
-        return wishFacade.getWishList(offset, limit, currentLocationNo)
+    ,@RequestParam(required = false) bcode: String): WishListResponse {
+        return wishFacade.getWishList(offset, limit, currentLocationNo, bcode)
+    }
+
+    /**
+     * 사용자가 찜한 장소들의 고유한 법정동 목록을 조회하는 API
+     * @return 법정동 목록
+     */
+    @GetMapping("/wishes/dongs")
+    fun getWishDongList(): WishDongInfoResponse {
+        return wishFacade.getWishDongList()
     }
 }
