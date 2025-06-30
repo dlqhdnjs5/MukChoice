@@ -24,6 +24,13 @@ class LocationRepository(
             .resultList
     }
 
+    fun findCurrentLocationsByUserNo(userNo: Int): LocationEntity? {
+        val jpql = "SELECT location FROM LocationEntity location WHERE location.userNo = :userNo AND location.isSelected = true"
+        return entityManager.createQuery(jpql, LocationEntity::class.java)
+            .setParameter("userNo", userNo)
+            .resultList.firstOrNull()
+    }
+
     fun deleteLocation(locationNo: Int, userNo: Int) {
         val locationEntity: LocationEntity? = findLocationByNoAndUserNo(locationNo, userNo)
         check(locationEntity != null) { "Location not found or does not belong to the user." }

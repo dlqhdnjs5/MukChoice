@@ -1,10 +1,9 @@
 package com.project.mukchoice.service
 
 import com.project.mukchoice.model.place.PlaceDto
+import com.project.mukchoice.model.wish.WishDongInfoDto
 import com.project.mukchoice.model.wish.WishDto
 import com.project.mukchoice.model.wish.WishEntity
-import com.project.mukchoice.model.wish.WishListResponse
-import com.project.mukchoice.repository.PlaceRepository
 import com.project.mukchoice.repository.WishRepository
 import com.project.mukchoice.util.ContextHolder
 import org.springframework.stereotype.Service
@@ -79,5 +78,16 @@ class WishService(
 
     fun getWishListWithPlaceByRelation(userNo: Int, offset: Int, limit: Int): List<WishEntity> {
         return wishRepository.findByUserNoWithPagingWithPlace(userNo, offset, limit)
+    }
+
+    fun getWishDongList(userNo: Int): List<WishDongInfoDto> {
+        return wishRepository.findDistinctDongsByUserNo(userNo)
+    }
+
+    fun getWishListByBcodeWithTotalCount(userNo: Int, bcode: String, offset: Int, limit: Int): Pair<List<WishEntity>, Long> {
+        val wishEntities: List<WishEntity> = wishRepository.findByUserNoAndBcodeWithPaging(userNo, bcode, offset, limit)
+        val total = wishRepository.countByUserNoAndBcode(userNo, bcode)
+
+        return Pair(wishEntities, total)
     }
 }

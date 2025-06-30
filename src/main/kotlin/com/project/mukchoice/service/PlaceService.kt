@@ -195,6 +195,8 @@ class PlaceService(
             roadAddressName = placeDto.roadAddressName,
             x = placeDto.x.toDouble(),
             y = placeDto.y.toDouble(),
+            bcode = placeDto.bcode!!,
+            dong = placeDto.dong!!,
             placeUrl = placeDto.placeUrl
         )
         return placeRepository.save(entity)

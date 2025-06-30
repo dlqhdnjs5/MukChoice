@@ -13,6 +13,8 @@ data class PlaceDto(
     val roadAddressName: String?,
     val x: String,
     val y: String,
+    var bcode: String? = null,
+    var dong: String? = null,
     val placeUrl: String,
     var thumbnailUrl: String?,
     var distance: String?,
