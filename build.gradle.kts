@@ -40,7 +40,6 @@ dependencies {
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.mysql:mysql-connector-j")
 
-	// 코루틴
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	annotationProcessor("org.projectlombok:lombok")
@@ -48,8 +47,8 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-	testImplementation("org.mockito:mockito-inline:4.+" )
-
+	testImplementation("org.mockito:mockito-inline:4.+")
+	testImplementation("io.mockk:mockk:1.13.10")
 }
 
 kotlin {
