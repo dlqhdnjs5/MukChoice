@@ -202,4 +202,147 @@ class PlaceService(
         return placeRepository.save(entity)
     }
 
+    /**
+     * 카카오 장소 URL이 존재하는지 확인
+     * @param placeId 장소 ID
+     * @return 존재하면 true, 아니면 false
+     */
+    fun isValidKakaoPlace(placeId: Long): Boolean {
+        val url = "https://place.map.kakao.com/$placeId"
+
+        return try {
+            val response = httpWebClientManager.get(url, HttpHeaders(), String::class.java)
+            response != null && response.isNotEmpty()
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /**
+     * 주소를 좌표로 변환하는 함수 (단일 결과)
+     * @param address 변환할 주소 (예: "서울특별시 강남구 삼성동 159")
+     * @return 변환된 좌표 정보 또는 null
+     */
+    fun searchAddressToCoordinate(address: String): AddressDocument? {
+        val url = "https://dapi.kakao.com/v2/local/search/address?query=${address}"
+        val headers = HttpHeaders().apply {
+            add("Authorization", "KakaoAK $kakaoRestApiKey")
+        }
+
+        try {
+            return httpWebClientManager.get(url, headers, KakaoAddressSearchResponse::class.java)?.documents?.firstOrNull()
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching address to coordinate: ${e.message}", e)
+        }
+    }
+
+    /**
+     * 주소를 좌표로 변환하는 함수 (여러 결과)
+     * @param address 변환할 주소
+     * @param page 페이지 번호 (기본값: 1)
+     * @param size 페이지 크기 (기본값: 10, 최대 30)
+     * @return 변환된 좌표 정보 리스트
+     */
+    fun searchAddressesToCoordinates(address: String, page: Int = 1, size: Int = 10): List<AddressDocument> {
+        val url = "https://dapi.kakao.com/v2/local/search/address?query=${address}&page=${page}&size=${size}"
+        val headers = HttpHeaders().apply {
+            add("Authorization", "KakaoAK $kakaoRestApiKey")
+        }
+
+        try {
+            return httpWebClientManager.get(url, headers, KakaoAddressSearchResponse::class.java)?.documents ?: emptyList()
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching addresses to coordinates: ${e.message}", e)
+        }
+    }
+
+    /**
+     * 좌표를 주소로 변환하는 함수 (좌표 → 주소)
+     * @param x 경도
+     * @param y 위도
+     * @return 변환된 주소 정보 또는 null
+     */
+    fun searchCoordinateToAddress(x: String, y: String): AddressDocument? {
+        val url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${x}&y=${y}&input_coord=WGS84"
+        val headers = HttpHeaders().apply {
+            add("Authorization", "KakaoAK $kakaoRestApiKey")
+        }
+
+        try {
+            return httpWebClientManager.get(url, headers, KakaoAddressSearchResponse::class.java)?.documents?.firstOrNull()
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching coordinate to address: ${e.message}", e)
+        }
+    }
+
+    /**
+     * 좌표를 행정구역정보로 변환하는 함수
+     * @param x 경도
+     * @param y 위도
+     * @return 행정구역 정보 리스트 (행정동과 법정동 정보 포함)
+     */
+    fun searchCoordinateToDistrict(x: String, y: String): List<DistrictDocument> {
+        val url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${x}&y=${y}&input_coord=WGS84"
+        val headers = HttpHeaders().apply {
+            add("Authorization", "KakaoAK $kakaoRestApiKey")
+        }
+
+        try {
+            return httpWebClientManager.get(url, headers, KakaoCoordToDistrictResponse::class.java)?.documents ?: emptyList()
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching coordinate to district: ${e.message}", e)
+        }
+    }
+
+    /**
+     * 좌표를 행정구역정보로 변환하는 함수 (행정동만)
+     * @param x 경도
+     * @param y 위도
+     * @return 행정동 정보 또는 null
+     */
+    fun searchCoordinateToAdministrativeDistrict(x: String, y: String): DistrictDocument? {
+        return searchCoordinateToDistrict(x, y).find { it.region_type == "H" }
+    }
+
+    /**
+     * 좌표를 행정구역정보로 변환하는 함수 (법정동만)
+     * @param x 경도
+     * @param y 위도
+     * @return 법정동 정보 또는 null
+     */
+    fun searchCoordinateToLegalDistrict(x: String, y: String): DistrictDocument? {
+        return searchCoordinateToDistrict(x, y).find { it.region_type == "B" }
+    }
+
+    /**
+     * 장소 검증 및 저장을 위한 공통 로직
+     * @param x 경도
+     * @param y 위도
+     * @param placeName 장소명
+     * @param placeId 장소 ID
+     * @param placeCategory 장소 카테고리
+     * @return 저장된 PlaceEntity
+     */
+    fun validateAndSavePlace(x: String, y: String, placeName: String, placeId: Long, placeCategory: com.project.mukchoice.consts.PlaceCategory): com.project.mukchoice.model.place.PlaceEntity {
+        if (!isValidKakaoPlace(placeId)) {
+            throw IllegalArgumentException("존재하지 않는 placeId 입니다.")
+        }
+
+        val document = searchPlace(x, y, placeName)
+            ?: throw IllegalArgumentException("해당 장소가 존재하지 않습니다.")
+
+        if (placeId.toString() != document.id) {
+            throw IllegalArgumentException("placeId와 검색된 장소의 ID가 일치하지 않습니다.")
+        }
+
+        val districtDocument = searchCoordinateToLegalDistrict(x, y)
+            ?: throw IllegalArgumentException("해당 좌표에 대한 법정동 정보가 없습니다.")
+
+        val placeDto = PlaceDto.fromDocumentByCategory(document, placeCategory).apply {
+            this.bcode = districtDocument.code
+            this.dong = districtDocument.region_3depth_name
+        }
+
+        return savePlace(placeDto)
+    }
 }

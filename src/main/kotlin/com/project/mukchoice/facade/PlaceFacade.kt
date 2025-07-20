@@ -80,25 +80,20 @@ class PlaceFacade(
     @Transactional
     fun addWishList(addWishListRequest: AddWishListRequest) {
         val userInfo = ContextHolder.getUserInfoWithCheck()
-        val document =
-            placeService.searchPlace(addWishListRequest.x, addWishListRequest.y, addWishListRequest.placeName)
-                ?: throw IllegalArgumentException("해당 장소가 존재하지 않습니다.")
+        val userNo = userInfo.userNo!!
+        val placeId = addWishListRequest.placeId.toLong()
 
-        if (addWishListRequest.placeId != document.id) {
-            throw IllegalArgumentException("존재하지 않는 장소입니다.")
-        }
+        placeService.validateAndSavePlace(
+            x = addWishListRequest.x,
+            y = addWishListRequest.y,
+            placeName = addWishListRequest.placeName,
+            placeId = placeId,
+            placeCategory = addWishListRequest.placeCategory
+        )
 
-        val currentLocation = locationService.getCurrentLocationByUserNo(userInfo.userNo!!)
-            ?: throw IllegalArgumentException("현재 위치 정보가 없습니다. 위치를 설정해주세요.")
-        val placeDto = PlaceDto.fromDocumentByCategory(document, addWishListRequest.placeCategory)
-            .apply {
-                this.bcode = currentLocation.bcode
-                this.dong = currentLocation.dong
-            }
-        placeService.savePlace(placeDto)
         wishService.updateWish(
-            userNo = userInfo.userNo,
-            placeId = placeDto.id.toLong(),
+            userNo = userNo,
+            placeId = placeId,
             isWish = addWishListRequest.isWish
         )
     }

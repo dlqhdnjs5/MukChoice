@@ -26,6 +26,7 @@ import java.time.LocalDateTime
         )
     ]
 )
+@Suppress("DEPRECATION")
 class PlaceControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -48,7 +49,8 @@ class PlaceControllerTest {
         val place = mock(PlaceDto::class.java)
         val wishDto = WishDto(userNo = 1, placeId = 100L, regTime = LocalDateTime.now(), place = place)
         val response = WishListResponse(listOf(wishDto), 1)
-        given(placeFacade.getWishList(0, 20, 0)).willReturn(response)
+        val bcode = "1234"
+        given(placeFacade.getWishList(0, 20, 0, bcode)).willReturn(response)
 
         // when & then
         mockMvc.get("/places/wishes?offset=0&limit=20&currentLocationNo=0")
@@ -67,15 +69,20 @@ class PlaceControllerTest {
             categoryName = "음식점 > 한식",
             categoryGroupCode = "FD6",
             categoryGroupName = "음식점",
-            placeCategory = com.project.mukchoice.consts.PlaceCategory.KOREAN_FOOD,
             phone = "02-123-4567",
             addressName = "서울시 강남구",
             roadAddressName = "서울시 강남구 테헤란로",
             x = "127.0",
             y = "37.5",
+            bcode = "1168010600",
+            dong = "역삼동",
             placeUrl = "https://place.kakao.com/1",
             thumbnailUrl = null,
-            distance = "100"
+            distance = "100",
+            totalCount = null,
+            isEnd = null,
+            placeCategory = com.project.mukchoice.consts.PlaceCategory.KOREAN_FOOD,
+            isWish = null
         )
 
         val placeDto2 = PlaceDto(
@@ -84,15 +91,20 @@ class PlaceControllerTest {
             categoryName = "음식점 > 태국음식",
             categoryGroupCode = "FD6",
             categoryGroupName = "음식점",
-            placeCategory = com.project.mukchoice.consts.PlaceCategory.THAI_FOOD,
             phone = "02-123-4568",
             addressName = "서울시 강남구",
             roadAddressName = "서울시 강남구 역삼로",
             x = "127.1",
             y = "37.6",
+            bcode = "1168010700",
+            dong = "삼성동",
             placeUrl = "https://place.kakao.com/2",
             thumbnailUrl = null,
-            distance = "200"
+            distance = "200",
+            totalCount = null,
+            isEnd = null,
+            placeCategory = com.project.mukchoice.consts.PlaceCategory.THAI_FOOD,
+            isWish = null
         )
 
         val response = com.project.mukchoice.model.place.PlaceResponse(listOf(placeDto1, placeDto2))
@@ -130,7 +142,6 @@ class PlaceControllerTest {
             categoryName = "음식점",
             categoryGroupCode = "FD6",
             categoryGroupName = "음식점",
-            placeCategory = com.project.mukchoice.consts.PlaceCategory.ALL,
             phone = "02-123-4567",
             addressName = "서울시 강남구",
             roadAddressName = "서울시 강남구 테헤란로",
