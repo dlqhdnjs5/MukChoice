@@ -5,7 +5,6 @@ import com.project.mukchoice.manager.ChromeDriverManager
 import com.project.mukchoice.manager.HttpWebClientManager
 import com.project.mukchoice.model.place.*
 import com.project.mukchoice.repository.PlaceRepository
-import kotlinx.coroutines.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
@@ -18,51 +17,39 @@ class PlaceService(
     private val placeRepository: PlaceRepository,
 ) {
     companion object {
-        private const val RADIUS = 1000
+        private const val ONE_KM_RADIUS = 1000
+        private const val TWO_KM_RADIUS = 2000
         private const val SIZE = 15
     }
+
+    /**
+     * 카카오 API 호출을 위한 공통 헤더 생성
+     */
+    private fun createKakaoHeaders(): HttpHeaders {
+        return HttpHeaders().apply {
+            add("Authorization", "KakaoAK $kakaoRestApiKey")
+        }
+    }
+
     /**
      * searchPlace를 사용하여 is_end가 true가 될 때까지 여러 페이지를 반복 조회하는 함수, 최대 10번 허용
      * @param coordinateX X 좌표
      * @param coordinateY Y 좌표
-     * @param query 가게명
+     * @param category 가게명
      * @return 모든 Document 리스트
      */
-    fun searchPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?): List<Document> {
-        val actualQuery = query?.displayName ?: throw IllegalArgumentException("Query must not be null")
+    fun searchCategoryPlaces(coordinateX: String, coordinateY: String, category: PlaceCategory?): List<Document> {
+        val actualQuery = category?.displayName ?: throw IllegalArgumentException("Query must not be null")
         return searchPlacesWithPagination { page ->
             "https://dapi.kakao.com/v2/local/search/keyword?" +
-                    "query=${actualQuery} &x=${coordinateX}&y=${coordinateY}&radius=${RADIUS}&page=${page}&size=${SIZE}"
+                    "query=${actualQuery}&x=${coordinateX}&y=${coordinateY}&radius=${ONE_KM_RADIUS}&page=${page}&size=${SIZE}"
         }
     }
 
     fun searchAllPlaces(coordinateX: String, coordinateY: String): List<Document> {
         return searchPlacesWithPagination { page ->
             "https://dapi.kakao.com/v2/local/search/category?" +
-                    "category_group_code=FD6&x=${coordinateX}&y=${coordinateY}&radius=${RADIUS}&page=${page}&size=${SIZE}"
-        }
-    }
-
-    /**
-     * 카카오 키워드 검색 API를 사용하여 장소를 검색
-     * @param coordinateX X 좌표
-     * @param coordinateY Y 좌표
-     * @param query 검색어 (PlaceCategory)
-     * @param page 페이지 번호
-     * @return 검색된 장소 리스트
-     */
-    fun searchPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?, page: Int): List<Document>? {
-        val actualQuery = query?.displayName ?: PlaceCategory.ALL.displayName
-        val url = "https://dapi.kakao.com/v2/local/search/keyword?" +
-                "query=${actualQuery}&x=${coordinateX}&y=${coordinateY}&radius=${RADIUS}&page=${page}&size=${SIZE}&sort=distance"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
-
-        try {
-            return httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)?.documents
-        } catch (e: Exception) {
-            throw IllegalStateException("Error occurred while searching for places: ${e.message}", e)
+                    "category_group_code=FD6&x=${coordinateX}&y=${coordinateY}&radius=${ONE_KM_RADIUS}&page=${page}&size=${SIZE}"
         }
     }
 
@@ -73,13 +60,11 @@ class PlaceService(
      * @param query 가게명
      * @return 검색된 장소 리스트
      */
-    fun searchPlace(coordinateX: String, coordinateY: String, query: String): Document? {
+    fun searchExactPlace(coordinateX: String, coordinateY: String, query: String): Document? {
         val radius = 5
         val url = "https://dapi.kakao.com/v2/local/search/keyword?" +
                 "query=${query}&x=${coordinateX}&y=${coordinateY}&radius=${radius}&page=1&size=1"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
+        val headers = createKakaoHeaders()
 
         try {
             return httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)?.documents?.get(0)
@@ -88,61 +73,27 @@ class PlaceService(
         }
     }
 
-    /**
-     * 카카오 이미지 검색 API를 사용하여 장소의 이미지를 검색. 하지만 정확성이 너무 떨어져서 사용 X
-     * @param address 장소의 주소
-     * @param placeName 장소의 이름
-     * @return 이미지 URL 또는 null
-     */
-    fun searchPlacesImg(address: String?, placeName: String): String? {
-        val query = "$address $placeName"
-        val url = "https://dapi.kakao.com/v2/search/image?query=$query&size=5"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
+    fun searchPlacesWithQuery(coordinateX: String, coordinateY: String, query: String?): List<Document> {
+        val url = "https://dapi.kakao.com/v2/local/search/keyword?" +
+                "query=${query}&x=${coordinateX}&y=${coordinateY}&radius=${TWO_KM_RADIUS}&page=1&size=15&category_group_code=FD6"
+        val headers = createKakaoHeaders()
 
-        val result = httpWebClientManager.get(url, headers, KakaoImageSearchResponse::class.java)
-
-        return result?.meta?.total_count?.let {
-            result.documents.get(0).image_url
+        try {
+            return httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)?.documents ?: emptyList()
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching for places: ${e.message}", e)
         }
     }
 
-    fun getPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?, page: Int): List<PlaceDto> {
-        if (query == PlaceCategory.ALL || query == null) {
-            return searchAllPlaces(coordinateX, coordinateY)
-                .map { PlaceDto.fromDocumentByCategory(it, PlaceCategory.ALL)  }
-        }
-
-        return searchPlaces(coordinateX, coordinateY, query)
-            .map { PlaceDto.fromDocumentByCategory(it, query) }
+    fun getPlaces(coordinateX: String, coordinateY: String, category: PlaceCategory): List<PlaceDto> {
+        return searchCategoryPlaces(coordinateX, coordinateY, category)
+            .map { PlaceDto.fromDocument(it) }
     }
 
     /**
-     * 병렬로 장소를 검색하고 각 장소에 대한 썸네일을 크롤링하는 함수
-     * cpu사용량 문제와, 저작권 문제로  보류
-     * @param coordinateX X 좌표
-     * @param coordinateY Y 좌표
-     * @param query 검색어
-     * @param page 페이지 번호
-     * @return 장소 DTO 리스트
+     * 카카오 키워드 검색 API를 사용하여 장소를 여러 페이지에 걸쳐 검색. 최대 10번 호출
      */
-    suspend fun getPlacesParallel(coordinateX: String, coordinateY: String, query: PlaceCategory, page: Int): List<PlaceDto> {
-        val places = searchPlaces(coordinateX, coordinateY, query, page) ?: return emptyList()
-
-        return coroutineScope {
-            places.map { place ->
-                async {
-                    fetchPlaceDtoWithThumbnail(place)
-                }
-            }.awaitAll()
-        }
-    }
-
-    /**
-     * 카카오 키워드 검색 API를 사용하여 장소를 여러 페이지에 걸쳐 검색
-     */
-    private fun searchPlacesWithPagination(createUrl: (Int) -> String): List<Document> {
+    private inline fun searchPlacesWithPagination(createUrl: (Int) -> String): List<Document> {
         val allDocuments = mutableListOf<Document>()
         var page = 1
         var isEnd = false
@@ -153,9 +104,7 @@ class PlaceService(
             if (callCount++ >= maxCalls) break
 
             val url = createUrl(page)
-            val headers = HttpHeaders().apply {
-                add("Authorization", "KakaoAK $kakaoRestApiKey")
-            }
+            val headers = createKakaoHeaders()
 
             val response = try {
                 httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)
@@ -169,17 +118,6 @@ class PlaceService(
         } while (!isEnd)
 
         return allDocuments
-    }
-
-
-    private suspend fun fetchPlaceDtoWithThumbnail(place: Document): PlaceDto = withContext(Dispatchers.IO) {
-        delay(200)
-        val thumbnailUrl = chromeDriverManager.getKakaoPlaceThumbnailUrl(place.place_url)
-        return@withContext thumbnailUrl?.let {
-            PlaceDto.fromDocument(place).apply {
-                this.thumbnailUrl = it
-            }
-        } ?: PlaceDto.fromDocument(place)
     }
 
     fun savePlace(placeDto: PlaceDto): PlaceEntity {
@@ -225,9 +163,7 @@ class PlaceService(
      */
     fun searchAddressToCoordinate(address: String): AddressDocument? {
         val url = "https://dapi.kakao.com/v2/local/search/address?query=${address}"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
+        val headers = createKakaoHeaders()
 
         try {
             return httpWebClientManager.get(url, headers, KakaoAddressSearchResponse::class.java)?.documents?.firstOrNull()
@@ -245,9 +181,7 @@ class PlaceService(
      */
     fun searchAddressesToCoordinates(address: String, page: Int = 1, size: Int = 10): List<AddressDocument> {
         val url = "https://dapi.kakao.com/v2/local/search/address?query=${address}&page=${page}&size=${size}"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
+        val headers = createKakaoHeaders()
 
         try {
             return httpWebClientManager.get(url, headers, KakaoAddressSearchResponse::class.java)?.documents ?: emptyList()
@@ -264,9 +198,7 @@ class PlaceService(
      */
     fun searchCoordinateToAddress(x: String, y: String): AddressDocument? {
         val url = "https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${x}&y=${y}&input_coord=WGS84"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
+        val headers = createKakaoHeaders()
 
         try {
             return httpWebClientManager.get(url, headers, KakaoAddressSearchResponse::class.java)?.documents?.firstOrNull()
@@ -283,9 +215,7 @@ class PlaceService(
      */
     fun searchCoordinateToDistrict(x: String, y: String): List<DistrictDocument> {
         val url = "https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=${x}&y=${y}&input_coord=WGS84"
-        val headers = HttpHeaders().apply {
-            add("Authorization", "KakaoAK $kakaoRestApiKey")
-        }
+        val headers = createKakaoHeaders()
 
         try {
             return httpWebClientManager.get(url, headers, KakaoCoordToDistrictResponse::class.java)?.documents ?: emptyList()
@@ -323,12 +253,12 @@ class PlaceService(
      * @param placeCategory 장소 카테고리
      * @return 저장된 PlaceEntity
      */
-    fun validateAndSavePlace(x: String, y: String, placeName: String, placeId: Long, placeCategory: com.project.mukchoice.consts.PlaceCategory): com.project.mukchoice.model.place.PlaceEntity {
+    fun validateAndSavePlace(x: String, y: String, placeName: String, placeId: Long): PlaceEntity {
         if (!isValidKakaoPlace(placeId)) {
             throw IllegalArgumentException("존재하지 않는 placeId 입니다.")
         }
 
-        val document = searchPlace(x, y, placeName)
+        val document = searchExactPlace(x, y, placeName)
             ?: throw IllegalArgumentException("해당 장소가 존재하지 않습니다.")
 
         if (placeId.toString() != document.id) {
@@ -338,11 +268,88 @@ class PlaceService(
         val districtDocument = searchCoordinateToLegalDistrict(x, y)
             ?: throw IllegalArgumentException("해당 좌표에 대한 법정동 정보가 없습니다.")
 
-        val placeDto = PlaceDto.fromDocumentByCategory(document, placeCategory).apply {
+        val placeDto = PlaceDto.fromDocument(document).apply {
             this.bcode = districtDocument.code
             this.dong = districtDocument.region_3depth_name
         }
 
         return savePlace(placeDto)
     }
+
+    /**
+     * 장소 DTO를 Document에서 변환하고 썸네일 URL을 크롤링하여 추가하는 함수
+     * 현재는 크롤링 기능을 사용하지 않음 (저작권 문제로 보류)
+     * @param place 카카오 장소 Document
+     * @return PlaceDto 객체
+     */
+    /*private suspend fun fetchPlaceDtoWithThumbnail(place: Document): PlaceDto = withContext(Dispatchers.IO) {
+        delay(200)
+        val thumbnailUrl = chromeDriverManager.getKakaoPlaceThumbnailUrl(place.place_url)
+        return@withContext thumbnailUrl?.let {
+            PlaceDto.fromDocument(place).apply {
+                this.thumbnailUrl = it
+            }
+        } ?: PlaceDto.fromDocument(place)
+    }*/
+
+
+    /**
+     * 병렬로 장소를 검색하고 각 장소에 대한 썸네일을 크롤링하는 함수
+     * cpu사용량 문제와, 저작권 문제로  보류
+     * @param coordinateX X 좌표
+     * @param coordinateY Y 좌표
+     * @param query 검색어
+     * @param page 페이지 번호
+     * @return 장소 DTO 리스트
+     */
+    /*suspend fun getPlacesParallel(coordinateX: String, coordinateY: String, category: PlaceCategory, page: Int): List<PlaceDto> {
+        val places = searchCategoryPlaces(coordinateX, coordinateY, category, page) ?: return emptyList()
+
+        return coroutineScope {
+            places.map { place ->
+                async {
+                    fetchPlaceDtoWithThumbnail(place)
+                }
+            }.awaitAll()
+        }
+    }*/
+
+    /**
+     * 카카오 이미지 검색 API를 사용하여 장소의 이미지를 검색. 하지만 정확성이 너무 떨어져서 사용 X
+     * @param address 장소의 주소
+     * @param placeName 장소의 이름
+     * @return 이미지 URL 또는 null
+     */
+    /*fun searchPlacesImg(address: String?, placeName: String): String? {
+        val query = "$address $placeName"
+        val url = "https://dapi.kakao.com/v2/search/image?query=$query&size=5"
+        val headers = createKakaoHeaders()
+
+        val result = httpWebClientManager.get(url, headers, KakaoImageSearchResponse::class.java)
+
+        return result?.meta?.total_count?.let {
+            result.documents.get(0).image_url
+        }
+    }*/
+
+    /**
+     * 카카오 키워드 검색 API를 사용하여 장소를 검색
+     * @param coordinateX X 좌표
+     * @param coordinateY Y 좌표
+     * @param category 검색어 (PlaceCategory)
+     * @param page 페이지 번호
+     * @return 검색된 장소 리스트
+     */
+    /*fun searchCategoryPlaces(coordinateX: String, coordinateY: String, category: PlaceCategory?, page: Int): List<Document>? {
+        val actualCategory = category?.displayName ?: PlaceCategory.ALL.displayName
+        val url = "https://dapi.kakao.com/v2/local/search/keyword?" +
+                "query=${actualCategory}&x=${coordinateX}&y=${coordinateY}&radius=${ONE_KM_RADIUS}&page=${page}&size=${SIZE}&sort=distance"
+        val headers = createKakaoHeaders()
+
+        try {
+            return httpWebClientManager.get(url, headers, KakaoKeywordSearchPlaceResponse::class.java)?.documents
+        } catch (e: Exception) {
+            throw IllegalStateException("Error occurred while searching for places: ${e.message}", e)
+        }
+    }*/
 }
