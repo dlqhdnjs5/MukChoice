@@ -91,13 +91,13 @@ class PlaceFacadeTest {
             distance = "200"
         )
 
-        val koreanPlaceDto = PlaceDto.fromDocumentByCategory(koreanFoodDocument, PlaceCategory.KOREAN_FOOD)
-        val thaiPlaceDto = PlaceDto.fromDocumentByCategory(thaiFoodDocument, PlaceCategory.THAI_FOOD)
+        val koreanPlaceDto = PlaceDto.fromDocument(koreanFoodDocument)
+        val thaiPlaceDto = PlaceDto.fromDocument(thaiFoodDocument)
 
         // Mock service methods
-        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD, page))
+        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD))
             .thenReturn(listOf(koreanPlaceDto))
-        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.THAI_FOOD, page))
+        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.ASIAN_FOOD))
             .thenReturn(listOf(thaiPlaceDto))
         `when`(wishService.existsWish(1, 1L)).thenReturn(false)
         `when`(wishService.existsWish(1, 2L)).thenReturn(true)
@@ -106,7 +106,7 @@ class PlaceFacadeTest {
         val result = placeFacade.getPlacesMultiCategory(
             coordinateX = coordinateX,
             coordinateY = coordinateY,
-            queries = listOf(PlaceCategory.KOREAN_FOOD, PlaceCategory.THAI_FOOD),
+            categories = listOf(PlaceCategory.KOREAN_FOOD, PlaceCategory.ASIAN_FOOD),
             page = page
         )
 
@@ -119,11 +119,11 @@ class PlaceFacadeTest {
 
         assertEquals("2", result.places[1].id)
         assertEquals("테스트 태국음식", result.places[1].placeName)
-        assertEquals(PlaceCategory.THAI_FOOD, result.places[1].placeCategory)
+        assertEquals(PlaceCategory.ASIAN_FOOD, result.places[1].placeCategory)
         assertEquals(true, result.places[1].isWish)
 
-        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD, page)
-        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.THAI_FOOD, page)
+        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD)
+        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.ASIAN_FOOD)
         verify(wishService).existsWish(1, 1L)
         verify(wishService).existsWish(1, 2L)
     }
@@ -154,7 +154,7 @@ class PlaceFacadeTest {
         val result = placeFacade.getPlacesMultiCategory(
             coordinateX = coordinateX,
             coordinateY = coordinateY,
-            queries = null,
+            categories = null,
             page = page
         )
 
@@ -194,7 +194,7 @@ class PlaceFacadeTest {
         val result = placeFacade.getPlacesMultiCategory(
             coordinateX = coordinateX,
             coordinateY = coordinateY,
-            queries = listOf(PlaceCategory.ALL),
+            categories = listOf(PlaceCategory.ALL),
             page = page
         )
 
@@ -211,20 +211,20 @@ class PlaceFacadeTest {
     @Test
     fun `getPlacesMultiCategory should handle empty results`() {
         // given
-        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD, page))
+        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD))
             .thenReturn(emptyList())
 
         // when
         val result = placeFacade.getPlacesMultiCategory(
             coordinateX = coordinateX,
             coordinateY = coordinateY,
-            queries = listOf(PlaceCategory.KOREAN_FOOD),
+            categories = listOf(PlaceCategory.KOREAN_FOOD),
             page = page
         )
 
         // then
         assertTrue(result.places.isEmpty())
-        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD, page)
+        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD)
         verifyNoMoreInteractions(wishService)
     }
 
@@ -246,13 +246,13 @@ class PlaceFacadeTest {
             distance = "100"
         )
 
-        val koreanPlaceDto = PlaceDto.fromDocumentByCategory(document, PlaceCategory.KOREAN_FOOD)
-        val japanesePlaceDto = PlaceDto.fromDocumentByCategory(document, PlaceCategory.JAPANESE_FOOD)
+        val koreanPlaceDto = PlaceDto.fromDocument(document)
+        val japanesePlaceDto = PlaceDto.fromDocument(document)
 
         // Mock service methods
-        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD, page))
+        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD))
             .thenReturn(listOf(koreanPlaceDto))
-        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.JAPANESE_FOOD, page))
+        `when`(placeService.getPlaces(coordinateX, coordinateY, PlaceCategory.JAPANESE_FOOD))
             .thenReturn(listOf(japanesePlaceDto))
         `when`(wishService.existsWish(1, 1L)).thenReturn(false)
 
@@ -260,7 +260,7 @@ class PlaceFacadeTest {
         val result = placeFacade.getPlacesMultiCategory(
             coordinateX = coordinateX,
             coordinateY = coordinateY,
-            queries = listOf(PlaceCategory.KOREAN_FOOD, PlaceCategory.JAPANESE_FOOD),
+            categories = listOf(PlaceCategory.KOREAN_FOOD, PlaceCategory.JAPANESE_FOOD),
             page = page
         )
 
@@ -270,8 +270,8 @@ class PlaceFacadeTest {
         assertEquals("테스트 음식점", result.places[0].placeName)
         assertEquals(false, result.places[0].isWish)
 
-        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD, page)
-        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.JAPANESE_FOOD, page)
+        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.KOREAN_FOOD)
+        verify(placeService).getPlaces(coordinateX, coordinateY, PlaceCategory.JAPANESE_FOOD)
         verify(wishService, times(1)).existsWish(1, 1L) // 중복 제거 후 한 번만 호출되어야 함
     }
 }

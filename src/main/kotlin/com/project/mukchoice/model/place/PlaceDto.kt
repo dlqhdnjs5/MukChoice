@@ -24,28 +24,7 @@ data class PlaceDto(
     var isWish: Boolean? = null,
 ) {
     companion object {
-        fun fromDocumentByCategory(document: Document, category: PlaceCategory): PlaceDto {
-            return PlaceDto(
-                id = document.id,
-                placeName = document.place_name,
-                categoryName = document.category_name,
-                categoryGroupCode = document.category_group_code,
-                categoryGroupName = document.category_group_name,
-                phone = document.phone,
-                addressName = document.address_name,
-                roadAddressName = document.road_address_name,
-                x = document.x,
-                y = document.y,
-                placeUrl = document.place_url,
-                thumbnailUrl = null,
-                distance = document.distance,
-                placeCategory = category,
-            )
-        }
-
         fun fromDocument(document: Document): PlaceDto {
-            val placeCategory = extractCategoryFromGroupName(document.category_name)
-
             return PlaceDto(
                 id = document.id,
                 placeName = document.place_name,
@@ -60,7 +39,7 @@ data class PlaceDto(
                 placeUrl = document.place_url,
                 thumbnailUrl = null,
                 distance = document.distance,
-                placeCategory = placeCategory,
+                placeCategory = extractCategoryFromGroupName(document.category_name),
             )
         }
 
