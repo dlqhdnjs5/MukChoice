@@ -24,7 +24,6 @@ class GroupFacade(
             y = addPlaceToGroupRequest.y,
             placeName = addPlaceToGroupRequest.placeName,
             placeId = addPlaceToGroupRequest.placeId,
-            placeCategory = addPlaceToGroupRequest.placeCategory
         )
 
         groupService.addPlaceToGroup(userDto.userNo!!, groupId, addPlaceToGroupRequest)

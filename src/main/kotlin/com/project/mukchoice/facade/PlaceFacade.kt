@@ -33,7 +33,8 @@ class PlaceFacade(
         println("end")
     }*/
 
-    fun getPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?, page: Int): PlaceResponse {
+    // TODO 추후 f/o
+    /*fun getPlaces(coordinateX: String, coordinateY: String, query: PlaceCategory?, page: Int): PlaceResponse {
         val userInfo = ContextHolder.getUserInfoWithCheck()
         val places: List<PlaceDto> = placeService.getPlaces(coordinateX, coordinateY, query, page)
         places.apply {
@@ -46,26 +47,50 @@ class PlaceFacade(
             }
         }
         return PlaceResponse(places)
+    }*/
+
+    /**
+     * 장소를 검색하는 API
+     * @param coordinateX X 좌표
+     * @param coordinateY Y 좌표
+     * @param query 검색어
+     * @return PlaceResponse 객체에 장소 리스트가 포함됨
+     */
+    fun getPlacesWithQuery(coordinateX: String, coordinateY: String, query: String): PlaceResponse {
+        val userInfo = ContextHolder.getUserInfoWithCheck()
+        placeService.searchPlacesWithQuery(coordinateX, coordinateY, query)
+            .map { PlaceDto.fromDocument(it) }
+            .let { places ->
+                if (places.isEmpty()) {
+                    return PlaceResponse(emptyList())
+                }
+
+                places.forEach { place ->
+                    place.isWish = wishService.existsWish(userInfo.userNo!!, place.id.toLong())
+                }
+
+                return PlaceResponse(places)
+            }
     }
 
     fun getPlacesMultiCategory(
         coordinateX: String,
         coordinateY: String,
-        queries: List<PlaceCategory>?,
+        categories: List<PlaceCategory>?,
         page: Int
     ): PlaceResponse {
         val userInfo = ContextHolder.getUserInfoWithCheck()
 
-        if (queries.isNullOrEmpty() || queries[0] == PlaceCategory.ALL) {
+        if (categories.isNullOrEmpty() || categories[0] == PlaceCategory.ALL) {
             val result = placeService.searchAllPlaces(coordinateX, coordinateY)
-                .map { PlaceDto.fromDocumentByCategory(it, PlaceCategory.ALL) }
+                .map { PlaceDto.fromDocument(it) }
 
             return PlaceResponse(result)
         }
 
         val allPlaces = mutableListOf<PlaceDto>()
-        for (query in queries) {
-            val places = placeService.getPlaces(coordinateX, coordinateY, query, page)
+        for (category in categories) {
+            val places = placeService.getPlaces(coordinateX, coordinateY, category)
             allPlaces.addAll(places)
         }
 
@@ -88,7 +113,6 @@ class PlaceFacade(
             y = addWishListRequest.y,
             placeName = addWishListRequest.placeName,
             placeId = placeId,
-            placeCategory = addWishListRequest.placeCategory
         )
 
         wishService.updateWish(

@@ -1,12 +1,11 @@
 package com.project.mukchoice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.project.mukchoice.consts.PlaceCategory
 import com.project.mukchoice.facade.PlaceFacade
 import com.project.mukchoice.model.place.PlaceDto
 import com.project.mukchoice.model.wish.WishDto
 import com.project.mukchoice.model.wish.WishListResponse
-import com.project.mukchoice.service.UserService
-import com.project.mukchoice.service.WishService
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
@@ -30,12 +29,6 @@ import java.time.LocalDateTime
 class PlaceControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc
-
-    @MockBean
-    lateinit var wishService: WishService
-
-    @MockBean
-    lateinit var userService: UserService
 
     @MockBean
     lateinit var placeFacade: PlaceFacade
@@ -103,7 +96,7 @@ class PlaceControllerTest {
             distance = "200",
             totalCount = null,
             isEnd = null,
-            placeCategory = com.project.mukchoice.consts.PlaceCategory.THAI_FOOD,
+            placeCategory = PlaceCategory.ASIAN_FOOD,
             isWish = null
         )
 
@@ -112,7 +105,7 @@ class PlaceControllerTest {
         given(placeFacade.getPlacesMultiCategory(
             coordinateX = "126.61776532832",
             coordinateY = "37.5523173127979",
-            queries = listOf(com.project.mukchoice.consts.PlaceCategory.KOREAN_FOOD, com.project.mukchoice.consts.PlaceCategory.THAI_FOOD),
+            categories = listOf(PlaceCategory.KOREAN_FOOD, PlaceCategory.ASIAN_FOOD),
             page = 1
         )).willReturn(response)
 
@@ -157,7 +150,7 @@ class PlaceControllerTest {
         given(placeFacade.getPlacesMultiCategory(
             coordinateX = "126.61776532832",
             coordinateY = "37.5523173127979",
-            queries = null,
+            categories = null,
             page = 1
         )).willReturn(response)
 

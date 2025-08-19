@@ -38,27 +38,27 @@ data class PlaceDto(
                 y = document.y,
                 placeUrl = document.place_url,
                 thumbnailUrl = null,
-                distance = document.distance
+                distance = document.distance,
+                placeCategory = extractCategoryFromGroupName(document.category_name),
             )
         }
 
-        fun fromDocumentByCategory(document: Document, category: PlaceCategory): PlaceDto {
-            return PlaceDto(
-                id = document.id,
-                placeName = document.place_name,
-                categoryName = document.category_name,
-                categoryGroupCode = document.category_group_code,
-                categoryGroupName = document.category_group_name,
-                phone = document.phone,
-                addressName = document.address_name,
-                roadAddressName = document.road_address_name,
-                x = document.x,
-                y = document.y,
-                placeUrl = document.place_url,
-                thumbnailUrl = null,
-                distance = document.distance,
-                placeCategory = category,
-            )
+        /**
+         * category_group_name에서 두 번째 카테고리를 추출하여 PlaceCategory enum에 매핑
+         * 예: "음식점 > 분식 > 떡볶이" -> SNACK_FOOD
+         */
+        private fun extractCategoryFromGroupName(categoryGroupName: String?): PlaceCategory {
+            if (categoryGroupName.isNullOrBlank()) return PlaceCategory.ETC
+
+            val categories = categoryGroupName.split(" > ")
+            if (categories.size < 2) return PlaceCategory.ETC
+
+            val secondCategory = categories[1].trim()
+
+            return PlaceCategory.entries
+                .filter { it != PlaceCategory.ALL }
+                .find { it.displayName == secondCategory }
+                ?: PlaceCategory.ETC
         }
 
         fun fromEntity(entity: PlaceEntity): PlaceDto {

@@ -15,6 +15,7 @@ class PlaceController(
     private val wishFacade: PlaceFacade
 ) {
 
+    // TODO 추후 f/o
     /**
      * 장소를 조회하는 API
      * @param coordinateX X 좌표
@@ -23,7 +24,7 @@ class PlaceController(
      * @param page 페이지 번호, 기본값은 1
      * @return PlaceResponse 객체에 장소 리스트가 포함됨
      */
-    @GetMapping
+    /*@GetMapping
     fun getPlaces(
         @RequestParam coordinateX: String,
         @RequestParam coordinateY: String,
@@ -35,6 +36,19 @@ class PlaceController(
             coordinateY = coordinateY,
             query = query,
             page = page
+        )
+    }*/
+
+    @GetMapping
+    fun getPlacesWithQuery(
+        @RequestParam coordinateX: String,
+        @RequestParam coordinateY: String,
+        @RequestParam query: String,
+    ): PlaceResponse {
+        return placeFacade.getPlacesWithQuery(
+            coordinateX = coordinateX,
+            coordinateY = coordinateY,
+            query = query,
         )
     }
 
@@ -64,7 +78,7 @@ class PlaceController(
         return placeFacade.getPlacesMultiCategory(
             coordinateX = coordinateX,
             coordinateY = coordinateY,
-            queries = categoryQueries,
+            categories = categoryQueries,
             page = page
         )
     }
