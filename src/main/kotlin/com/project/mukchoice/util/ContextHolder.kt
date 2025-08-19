@@ -5,9 +5,22 @@ import com.project.mukchoice.model.user.UserDto
 class ContextHolder {
     companion object {
         private var userDtoInfoThreadLocal = ThreadLocal<UserDto>()
+        private var accessTokenThreadLocal = ThreadLocal<String>()
 
-        private fun getUser(): UserDto {
+        fun getUser(): UserDto {
             return userDtoInfoThreadLocal.get()
+        }
+
+        fun getAccessToken(): String? {
+            return accessTokenThreadLocal.get()
+        }
+
+        fun putAccessToken(token: String) {
+            accessTokenThreadLocal.set(token)
+        }
+
+        fun clearAccessToken() {
+            accessTokenThreadLocal.remove()
         }
 
         fun putUser(userDTO: UserDto) {
