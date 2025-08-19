@@ -39,9 +39,10 @@ class JwtManager(
         return cookies.firstOrNull { it.name == globalPropertySource.authToken }?.value
     }
 
-    fun generateToken(email: String, userNo: String): String {
+    fun generateToken(email: String, userNo: String, accessToken: String): String {
         val claims = Jwts.claims().setSubject(email)
         claims["userNo"] = userNo
+        claims["accessToken"] = accessToken
         val instant = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()
 
         return Jwts.builder()
@@ -67,5 +68,25 @@ class JwtManager(
 
     fun getClaimSubjectFromJwt(jwtToken: String): String? {
         return Jwts.parser().setSigningKey(KEY).parseClaimsJws(jwtToken).body.subject
+    }
+
+    fun getAccessTokenFromJwt(jwtToken: String): String? {
+        return try {
+            val claims = Jwts.parser().setSigningKey(KEY).parseClaimsJws(jwtToken).body
+            claims["accessToken"] as? String
+        } catch (exception: Exception) {
+            logger.warn("Failed to extract accessToken from JWT: ${exception}")
+            null
+        }
+    }
+
+    fun getUserNoFromJwt(jwtToken: String): String? {
+        return try {
+            val claims = Jwts.parser().setSigningKey(KEY).parseClaimsJws(jwtToken).body
+            claims["userNo"] as? String
+        } catch (exception: Exception) {
+            logger.warn("Failed to extract userNo from JWT: ${exception}")
+            null
+        }
     }
 }

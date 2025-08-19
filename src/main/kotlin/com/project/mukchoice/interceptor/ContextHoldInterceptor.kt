@@ -11,32 +11,39 @@ import org.springframework.web.servlet.HandlerInterceptor
 class ContextHoldInterceptor(
     private val userService: UserService,
     private val jwtManager: JwtManager,
-): HandlerInterceptor {
+) : HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val token = jwtManager.resolveJwtFromCookie(request)
 
-        if (token != null && jwtManager.validateToken(token)) {
-            val email = jwtManager.getClaimSubjectFromJwt(token)
+        if (token == null || !jwtManager.validateToken(token)) {
+            ContextHolder.clearUser()
+            ContextHolder.clearAccessToken()
+            return false
+        }
 
-            if (email != null) {
-                val userEntity = userService.getUserByEmail(email)
+        val email = jwtManager.getClaimSubjectFromJwt(token)
+        val accessToken = jwtManager.getAccessTokenFromJwt(token)
 
-                if (userEntity != null) {
-                    val userDTO = UserDto(
-                        userNo = userEntity.userNo,
-                        email = userEntity.email,
-                        nickName = userEntity.nickName,
-                        statusCode = userEntity.statusCode,
-                        typeCode = userEntity.typeCode,
-                        imgPath = userEntity.imgPath,
-                        lastLoginTime = userEntity.lastLoginTime,
-                        regTime = userEntity.regTime,
-                        modTime = userEntity.modTime
-                    )
-                    ContextHolder.putUser(userDTO)
-                }
+        if (email != null && accessToken != null) {
+            val userEntity = userService.getUserByEmail(email)
+
+            if (userEntity != null) {
+                val userDTO = UserDto(
+                    userNo = userEntity.userNo,
+                    email = userEntity.email,
+                    nickName = userEntity.nickName,
+                    statusCode = userEntity.statusCode,
+                    typeCode = userEntity.typeCode,
+                    imgPath = userEntity.imgPath,
+                    lastLoginTime = userEntity.lastLoginTime,
+                    regTime = userEntity.regTime,
+                    modTime = userEntity.modTime
+                )
+                ContextHolder.putUser(userDTO)
+                ContextHolder.putAccessToken(accessToken)
             }
         }
+
         return super.preHandle(request, response, handler)
     }
 

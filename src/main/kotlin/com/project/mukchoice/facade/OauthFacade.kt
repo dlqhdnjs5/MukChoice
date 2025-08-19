@@ -11,6 +11,9 @@ import com.project.mukchoice.model.user.UserResponse
 import com.project.mukchoice.service.GroupInvitationService
 import com.project.mukchoice.service.OauthService
 import com.project.mukchoice.service.UserService
+import com.project.mukchoice.util.ContextHolder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -22,6 +25,10 @@ class OauthFacade(
     private val gouprInvitationService: GroupInvitationService,
     private val jwtManager: JwtManager
 ) {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(OauthFacade::class.java)
+    }
+
     fun getKakaoAccessToken(code: String): String {
         val kakaoTokenResponse = oauthService.getKakaoAccessToken(code)
         return kakaoTokenResponse.accessToken
@@ -30,22 +37,39 @@ class OauthFacade(
     @Transactional
     fun kakaoLogin(accessToken: String): UserResponse {
         val userEntity = processKakaoLogin(accessToken)
-        return createUserResponse(userEntity)
+        return createUserResponse(userEntity, accessToken)
     }
 
     @Transactional
     fun kakaoLoginWithInvitation(accessToken: String, invitationType: InvitationType, invitationId: String): UserResponse {
         val userEntity = processKakaoLogin(accessToken)
 
-        val testUserNo = 3
-
         acceptInvitation(
             invitationType = invitationType,
             invitationId = invitationId,
-            userNo = testUserNo // userEntity.userNo!!
+            userNo = userEntity.userNo!!
         )
 
-        return createUserResponse(userEntity)
+        return createUserResponse(userEntity, accessToken)
+    }
+
+    fun kakaoLogout() {
+        val accessToken = ContextHolder.getAccessToken()
+
+        if (accessToken.isNullOrBlank()) {
+            logger.warn("No access token found in context for logout")
+            return
+        }
+
+        try {
+            oauthService.kakaoLogout(accessToken)
+        } catch (exception: Exception) {
+            val user = ContextHolder.getUser()
+            logger.error("Kakao logout failed. user: ${user.userNo} error: ${exception.message}", exception)
+        } finally {
+            ContextHolder.clearUser()
+            ContextHolder.clearAccessToken()
+        }
     }
 
     private fun processKakaoLogin(accessToken: String): UserEntity {
@@ -81,7 +105,7 @@ class OauthFacade(
         return userEntity
     }
 
-    private fun createUserResponse(userEntity: UserEntity): UserResponse {
+    private fun createUserResponse(userEntity: UserEntity, accessToken: String): UserResponse {
         return UserResponse(
             userDTO = UserDto(
                 userNo = userEntity.userNo,
@@ -94,7 +118,7 @@ class OauthFacade(
                 regTime = userEntity.regTime,
                 modTime = userEntity.modTime,
             ),
-            jwtToken = jwtManager.generateToken(userEntity.email, userEntity.userNo.toString())
+            jwtToken = jwtManager.generateToken(userEntity.email, userEntity.userNo.toString(), accessToken)
         )
     }
 
