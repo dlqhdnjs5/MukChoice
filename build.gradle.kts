@@ -32,6 +32,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("io.jsonwebtoken:jjwt-api:0.10.7")
 	implementation("org.apache.commons:commons-lang3")
+	implementation("commons-codec:commons-codec:1.15")
 	implementation("io.jsonwebtoken:jjwt-impl:0.10.7")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.10.7")
 	implementation("org.jsoup:jsoup:1.20.1")

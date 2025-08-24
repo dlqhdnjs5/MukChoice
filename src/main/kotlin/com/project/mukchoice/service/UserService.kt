@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(
-    val userRepository: UserRepository,
+    val userRepository: UserRepository
 ) {
     fun getUserByEmail(email: String): UserEntity? {
         return userRepository.findByEmail(email)
