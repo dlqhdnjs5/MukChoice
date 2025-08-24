@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+        </Property>
+        <Property name="LOG_DIRECTORY">/app/logs</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- File Appender for All Logs -->
+        <RollingFile name="FileAppender" fileName="${LOG_DIRECTORY}/mukchoice-dev.log"
+                     filePattern="${LOG_DIRECTORY}/mukchoice-dev-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="500MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="60"/>
+        </RollingFile>
+
+        <!-- Error Log File -->
+        <RollingFile name="ErrorFileAppender" fileName="${LOG_DIRECTORY}/error-dev.log"
+                     filePattern="${LOG_DIRECTORY}/error-dev-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="60"/>
+        </RollingFile>
+
+        <!-- Crypto Log File -->
+        <RollingFile name="CryptoFileAppender" fileName="${LOG_DIRECTORY}/crypto-dev.log"
+                     filePattern="${LOG_DIRECTORY}/crypto-dev-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="200MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="60"/>
+        </RollingFile>
+
+        <!-- Access Log File -->
+        <RollingFile name="AccessFileAppender" fileName="${LOG_DIRECTORY}/access-dev.log"
+                     filePattern="${LOG_DIRECTORY}/access-dev-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="500MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Application Root Logger -->
+        <Logger name="com.project.mukchoice" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="ErrorFileAppender"/>
+        </Logger>
+
+        <!-- Crypto Util Logger -->
+        <Logger name="com.project.mukchoice.util.CryptoUtil" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="CryptoFileAppender"/>
+            <AppenderRef ref="ErrorFileAppender"/>
+        </Logger>
+
+        <!-- Controller Access Logger -->
+        <Logger name="com.project.mukchoice.controller" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AccessFileAppender"/>
+            <AppenderRef ref="ErrorFileAppender"/>
+        </Logger>
+
+        <!-- Spring Framework -->
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Hibernate -->
+        <Logger name="org.hibernate" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- SQL Logging - OFF in dev -->
+        <Logger name="org.hibernate.SQL" level="OFF" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!-- Root Logger -->
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

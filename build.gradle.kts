@@ -26,8 +26,13 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa") {
+		exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+	}
+	implementation("org.springframework.boot:spring-boot-starter-web") {
+		exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+	}
+	implementation("org.springframework.boot:spring-boot-starter-log4j2")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("io.jsonwebtoken:jjwt-api:0.10.7")
