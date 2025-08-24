@@ -2,7 +2,9 @@ package com.project.mukchoice.model.user
 
 import com.project.mukchoice.consts.UserStatusCode
 import com.project.mukchoice.consts.UserTypeCode
+import com.project.mukchoice.converter.EncryptionConverter
 import jakarta.persistence.Column
+import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -20,7 +22,8 @@ class UserEntity(
     @Column(name = "user_no", nullable = false)
     val userNo: Int? = null,
 
-    @Column(name = "email", nullable = false, length = 200)
+    @Column(name = "email", nullable = false, length = 500)
+    @Convert(converter = EncryptionConverter::class)
     val email: String,
 
     @Column(name = "nick_name", nullable = false, length = 100)
@@ -34,7 +37,8 @@ class UserEntity(
     @Column(name = "type_code", nullable = false, length = 20)
     val typeCode: UserTypeCode,
 
-    @Column(name = "img_path", nullable = true, length = 200)
+    @Column(name = "img_path", nullable = true, length = 500)
+    @Convert(converter = EncryptionConverter::class)
     val imgPath: String?,
 
     @Column(name = "last_login_time", nullable = true)
