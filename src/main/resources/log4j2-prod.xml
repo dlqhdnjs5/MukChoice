@@ -14,8 +14,8 @@
         </Console>
 
         <!-- File Appender for All Logs -->
-        <RollingFile name="FileAppender" fileName="${LOG_DIRECTORY}/mukchoice-dev.log"
-                     filePattern="${LOG_DIRECTORY}/mukchoice-dev-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="FileAppender" fileName="${LOG_DIRECTORY}/mukchoice-prod.log"
+                     filePattern="${LOG_DIRECTORY}/mukchoice-prod-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -25,8 +25,8 @@
         </RollingFile>
 
         <!-- Error Log File -->
-        <RollingFile name="ErrorFileAppender" fileName="${LOG_DIRECTORY}/error-dev.log"
-                     filePattern="${LOG_DIRECTORY}/error-dev-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="ErrorFileAppender" fileName="${LOG_DIRECTORY}/error-prod.log"
+                     filePattern="${LOG_DIRECTORY}/error-prod-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <Policies>
@@ -37,8 +37,8 @@
         </RollingFile>
 
         <!-- Crypto Log File -->
-        <RollingFile name="CryptoFileAppender" fileName="${LOG_DIRECTORY}/crypto-dev.log"
-                     filePattern="${LOG_DIRECTORY}/crypto-dev-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="CryptoFileAppender" fileName="${LOG_DIRECTORY}/crypto-prod.log"
+                     filePattern="${LOG_DIRECTORY}/crypto-prod-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -48,8 +48,8 @@
         </RollingFile>
 
         <!-- Access Log File -->
-        <RollingFile name="AccessFileAppender" fileName="${LOG_DIRECTORY}/access-dev.log"
-                     filePattern="${LOG_DIRECTORY}/access-dev-%d{yyyy-MM-dd}-%i.log.gz">
+        <RollingFile name="AccessFileAppender" fileName="${LOG_DIRECTORY}/access-prod.log"
+                     filePattern="${LOG_DIRECTORY}/access-prod-%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
@@ -91,7 +91,7 @@
             <AppenderRef ref="Console"/>
         </Logger>
 
-        <!-- SQL Logging - OFF in dev -->
+        <!-- SQL Logging - OFF in prod -->
         <Logger name="org.hibernate.SQL" level="OFF" additivity="false">
             <AppenderRef ref="FileAppender"/>
         </Logger>

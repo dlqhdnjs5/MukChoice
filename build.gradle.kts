@@ -44,7 +44,7 @@ dependencies {
 	implementation("org.seleniumhq.selenium:selenium-java:4.33.0")
 	implementation("org.apache.commons:commons-pool2:2.12.0")
 	compileOnly("org.projectlombok:lombok")
-	runtimeOnly("com.mysql:mysql-connector-j")
+	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
