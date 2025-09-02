@@ -30,11 +30,18 @@ class DataSourceConfig(
 
     private fun additionalProperties(): Properties {
         val properties = Properties()
-        properties.setProperty("hibernate.hbm2ddl.auto", "update")
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect")
-        properties.setProperty("hibernate.show_sql", "true")
-        properties.setProperty("hibernate.format_sql", "true")
-        properties.setProperty("hibernate.use_sql_comments", "true") // TODO 추후 삭제
+        properties.setProperty("hibernate.hbm2ddl.auto", "validate")
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MariaDBDialect")
+
+        val activeProfile = System.getProperty("spring.profiles.active")
+        if (activeProfile == "prod") {
+            properties.setProperty("hibernate.show_sql", "false")
+            properties.setProperty("hibernate.format_sql", "false")
+        } else {
+            properties.setProperty("hibernate.show_sql", "true")
+            properties.setProperty("hibernate.format_sql", "true")
+        }
+        properties.setProperty("hibernate.use_sql_comments", "false")
         return properties
     }
 
