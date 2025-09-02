@@ -71,4 +71,11 @@ class LocationService(
         locationRepository.updateLocation(locationEntity)
     }
 
+    fun getCurrentLocationByUserNo(userNo: Int): LocationEntity? {
+        return locationRepository.findCurrentLocationsByUserNo(userNo)
+    }
+
+    fun getLocationByLocationNo(locationNo: Int): LocationEntity? {
+        return locationRepository.findLocationByLocationNo(locationNo)
+    }
 }

@@ -2,6 +2,7 @@ package com.project.mukchoice.service
 
 import com.project.mukchoice.config.GlobalPropertySource
 import com.project.mukchoice.manager.HttpWebClientManager
+import com.project.mukchoice.model.oauth.KakaoLogoutResponse
 import com.project.mukchoice.model.oauth.KakaoTokenRequest
 import com.project.mukchoice.model.oauth.KakaoTokenResponse
 import com.project.mukchoice.model.oauth.KakaoUserResponse
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -21,7 +21,8 @@ class OauthService(
     @Value("\${kakao.rest.api.key}") val kakaoRestApiKey: String,
     @Value("\${kakao.rest.api.accesstoken.url}") val kakaoAccessTokenUrl: String,
     @Value("\${kakao.rest.api.user.url}") val kakaoUserUrl: String,
-    @Value("\${kokao.rest.api.callback.url}") val kakaoCallbackUrl: String,
+    @Value("\${kakao.rest.api.callback.url}") val kakaoCallbackUrl: String,
+    @Value("\${kakao.rest.api.logout.url}") val kakaoLogoutUrl: String,
     val httpWebClientManager: HttpWebClientManager,
     val globalPropertySource: GlobalPropertySource
 ) {
@@ -72,6 +73,22 @@ class OauthService(
 
             return kakaoTokenResponse
         }
+    }
+
+    fun kakaoLogout(accessToken: String) {
+        val headers = HttpHeaders().apply {
+            add("Authorization", "Bearer $accessToken")
+        }
+
+        val httpEntity = HttpEntity(null, headers)
+
+        val logoutResponse = httpWebClientManager.post(
+            url = kakaoLogoutUrl,
+            responseType = KakaoLogoutResponse::class.java,
+            httpEntity = httpEntity
+        )
+
+        logger.info("Kakao Logout Response: $logoutResponse")
     }
 
 }

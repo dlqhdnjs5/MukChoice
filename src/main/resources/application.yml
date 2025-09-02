@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: MukChoice
+
+server:
+  port: 8080
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+logging:
+  config: classpath:log4j2-local.xml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+logging:
+  config: classpath:log4j2-prod.xml
