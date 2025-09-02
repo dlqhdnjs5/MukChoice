@@ -8,7 +8,7 @@ COPY src ./src
 # Build the application
 RUN gradle build -x test --no-daemon
 
-FROM openjdk:21-jre-slim
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
