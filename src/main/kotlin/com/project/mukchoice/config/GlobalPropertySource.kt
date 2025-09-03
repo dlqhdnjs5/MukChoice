@@ -10,7 +10,8 @@ import org.springframework.context.annotation.PropertySources
 @Getter
 @PropertySources(
     PropertySource(
-        value = arrayOf("file:./private.properties"), // JAR 실행 디렉토리의 private.properties
+        value = arrayOf("file:/app/config/private.properties"), // Docker 컨테이너 경로
+        //value = arrayOf("file:./private.properties"), // Docker 컨테이너 경로
         encoding = "utf-8",
         ignoreResourceNotFound = true
     ),
