@@ -2,26 +2,24 @@
 FROM gradle:8.5-jdk21 AS builder
 
 WORKDIR /app
-COPY build.gradle.kts settings.gradle.kts ./
-COPY src ./src
 
-# Build the application
+COPY build.gradle.kts settings.gradle.kts ./
+RUN gradle dependencies --no-daemon
+
+COPY src ./src
 RUN gradle build -x test --no-daemon
 
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Copy the built JAR
+
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Create directory for external config
 RUN mkdir -p /app/config
 
-# Set JVM options for production
 ENV JAVA_OPTS="-Xmx512m -Xms256m -Dspring.profiles.active=prod"
 
-# External config file will be mounted here
 VOLUME ["/app/config"]
 
 EXPOSE 8080
