@@ -41,3 +41,16 @@ out/
 
 private.properties
 public.properties
+
+# 로그 파일들
+logs/
+*.log
+
+# 배포 관련 파일들
+deploy.sh
+deploy-jar.sh
+docker-compose.yml
+README_DEPLOY.md
+
+# GitHub Actions
+.github/

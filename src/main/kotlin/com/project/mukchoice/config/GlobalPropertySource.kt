@@ -10,10 +10,14 @@ import org.springframework.context.annotation.PropertySources
 @Getter
 @PropertySources(
     PropertySource(
-        value = arrayOf("file:/app/config/private.properties"), // Docker 컨테이너 경로
+        value = arrayOf("file:./private.properties"), // JAR 실행 디렉토리의 private.properties
         encoding = "utf-8",
         ignoreResourceNotFound = true
-    ),PropertySource(value = arrayOf("/private.properties"), ignoreResourceNotFound = true)
+    ),
+    PropertySource(
+        value = arrayOf("classpath:private.properties"), // 로컬 개발환경 (src/main/resources)
+        ignoreResourceNotFound = true
+    )
 )
 class GlobalPropertySource {
     @Value("\${mukchoice.datasource.driverClassName}")

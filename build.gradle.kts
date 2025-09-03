@@ -40,8 +40,6 @@ dependencies {
 	implementation("commons-codec:commons-codec:1.15")
 	implementation("io.jsonwebtoken:jjwt-impl:0.10.7")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.10.7")
-	implementation("org.jsoup:jsoup:1.20.1")
-	implementation("org.seleniumhq.selenium:selenium-java:4.33.0")
 	implementation("org.apache.commons:commons-pool2:2.12.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
