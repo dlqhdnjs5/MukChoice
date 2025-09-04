@@ -85,6 +85,8 @@ class OauthService(
             val kakaoTokenResponse = requestOauthToken(code)
                 ?: throw IllegalStateException("Kakao token response is null")
 
+            logger.info("please please please: $kakaoTokenResponse")
+
             return kakaoTokenResponse
         } catch (e: Exception) {
             // 실패한 경우 캐시에서 제거
