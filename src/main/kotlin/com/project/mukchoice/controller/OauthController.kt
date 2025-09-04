@@ -5,6 +5,8 @@ import com.project.mukchoice.consts.InvitationType
 import com.project.mukchoice.facade.OauthFacade
 import com.project.mukchoice.model.user.UserResponse
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -13,6 +15,10 @@ class OauthController(
     val oauthFacade: OauthFacade,
     val globalPropertySource: GlobalPropertySource
 ) {
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(OauthController::class.java)
+    }
+
     /**
      * 먹초이스화면 에서 카카오 로그인 버튼 클릭시 카카오 로그인 화면 노출.
      * 로그인 화면에서 카카오 로그인 후  /login-callback 으로 콜백 요청옴(카카오 developer 설정에서 redirect URI 등록함)
@@ -24,8 +30,21 @@ class OauthController(
         @RequestParam("code") code: String, @RequestParam(value = "state", required = false) state: String?,
         response: HttpServletResponse
     ) {
-        val accessToken = oauthFacade.getKakaoAccessToken(code)
-        response.sendRedirect("${globalPropertySource.frontendUrl}/kakao-oauth/redirect?accessToken=${accessToken}&state=${state}")
+        logger.info("Kakao login callback received - code: $code, state: $state")
+
+        try {
+            val accessToken = oauthFacade.getKakaoAccessToken(code)
+            logger.info("Successfully got access token, redirecting to frontend...")
+
+            val redirectUrl = "${globalPropertySource.frontendUrl}/kakao-oauth/redirect?accessToken=${accessToken}&state=${state}"
+            logger.info("Redirect URL: $redirectUrl")
+
+            response.sendRedirect(redirectUrl)
+            logger.info("Redirect response sent successfully")
+        } catch (e: Exception) {
+            logger.error("Error in kakaoLoginCallback", e)
+            throw e
+        }
     }
 
     @GetMapping("/kakao-login")

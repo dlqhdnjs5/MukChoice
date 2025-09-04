@@ -45,6 +45,9 @@ class OauthService(
     }
 
     private fun requestOauthToken(code: String): KakaoTokenResponse? {
+        logger.info("Requesting OAuth token with code: $code")
+        logger.info("Using redirect_uri: ${globalPropertySource.baseUrl}/${kakaoCallbackUrl}")
+
         KakaoTokenRequest(
             client_id = kakaoRestApiKey,
             redirect_uri = "${globalPropertySource.baseUrl}/${kakaoCallbackUrl}",
