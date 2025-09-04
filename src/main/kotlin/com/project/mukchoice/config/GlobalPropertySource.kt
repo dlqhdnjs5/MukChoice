@@ -10,8 +10,12 @@ import org.springframework.context.annotation.PropertySources
 @Getter
 @PropertySources(
     PropertySource(
-        value = arrayOf("file:/app/config/private.properties"), // Docker 컨테이너 경로
-        //value = arrayOf("file:./private.properties"), // Docker 컨테이너 경로
+        value = arrayOf("file:/app/config/private.properties"), // Docker 컨테이너 경로 (운영환경)
+        encoding = "utf-8",
+        ignoreResourceNotFound = true
+    ),
+    PropertySource(
+        value = arrayOf("classpath:local.properties"), //로컬환경
         encoding = "utf-8",
         ignoreResourceNotFound = true
     ),
@@ -31,6 +35,8 @@ class GlobalPropertySource {
     lateinit var password: String
     @Value("\${mukchoice.base.url}")
     lateinit var baseUrl: String
+    @Value("\${mukchoice.frontend.url}")
+    lateinit var frontendUrl: String
     @Value("\${mukchoice.sec.web.token.key}")
     lateinit var secretWebTokenKey: String
     @Value("\${mukchoice.web.auth.header}")

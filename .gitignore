@@ -41,7 +41,7 @@ out/
 
 private.properties
 public.properties
-
+local.properties
 # 로그 파일들
 logs/
 *.log

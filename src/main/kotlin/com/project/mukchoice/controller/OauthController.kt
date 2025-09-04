@@ -1,5 +1,6 @@
 package com.project.mukchoice.controller
 
+import com.project.mukchoice.config.GlobalPropertySource
 import com.project.mukchoice.consts.InvitationType
 import com.project.mukchoice.facade.OauthFacade
 import com.project.mukchoice.model.user.UserResponse
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/oauth")
 class OauthController(
-    val oauthFacade: OauthFacade
+    val oauthFacade: OauthFacade,
+    val globalPropertySource: GlobalPropertySource
 ) {
     /**
      * 먹초이스화면 에서 카카오 로그인 버튼 클릭시 카카오 로그인 화면 노출.
@@ -23,7 +25,7 @@ class OauthController(
         response: HttpServletResponse
     ) {
         val accessToken = oauthFacade.getKakaoAccessToken(code)
-        response.sendRedirect("http://localhost:3000/oauth/redirect?accessToken=${accessToken}&state=${state}")
+        response.sendRedirect("${globalPropertySource.frontendUrl}/kakao-oauth/redirect?accessToken=${accessToken}&state=${state}")
     }
 
     @GetMapping("/kakao-login")
