@@ -15,14 +15,15 @@ import org.springframework.context.annotation.PropertySources
         ignoreResourceNotFound = true
     ),
     PropertySource(
-        value = arrayOf("classpath:local.properties"), //로컬환경
+        value = arrayOf("classpath:private.properties"), // 로컬 개발환경 (src/main/resources)
         encoding = "utf-8",
         ignoreResourceNotFound = true
     ),
     PropertySource(
-        value = arrayOf("classpath:private.properties"), // 로컬 개발환경 (src/main/resources)
+        value = arrayOf("classpath:local.properties"), //로컬환경
+        encoding = "utf-8",
         ignoreResourceNotFound = true
-    )
+    ),
 )
 class GlobalPropertySource {
     @Value("\${mukchoice.datasource.driverClassName}")
