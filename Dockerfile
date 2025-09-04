@@ -18,7 +18,7 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 
 RUN mkdir -p /app/config
 
-ENV JAVA_OPTS="-Xmx512m -Xms256m -Dspring.profiles.active=prod"
+ENV JAVA_OPTS="-Xmx512m -Xms512m -Dspring.profiles.active=prod"
 
 VOLUME ["/app/config"]
 
