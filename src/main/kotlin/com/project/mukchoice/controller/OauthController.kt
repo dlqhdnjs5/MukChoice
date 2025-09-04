@@ -41,6 +41,14 @@ class OauthController(
 
             response.sendRedirect(redirectUrl)
             logger.info("Redirect response sent successfully")
+        } catch (e: IllegalStateException) {
+            if (e.message?.contains("Duplicate authorization code request") == true) {
+                logger.info("Duplicate request ignored, no response sent")
+                // 중복 요청은 아무것도 하지 않음 (이미 첫 번째 요청에서 리다이렉트 완료)
+                return
+            }
+            logger.error("Error in kakaoLoginCallback", e)
+            throw e
         } catch (e: Exception) {
             logger.error("Error in kakaoLoginCallback", e)
             throw e
