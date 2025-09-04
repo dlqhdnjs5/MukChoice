@@ -1,7 +1,6 @@
 package com.project.mukchoice.service
 
 import com.project.mukchoice.consts.PlaceCategory
-import com.project.mukchoice.manager.ChromeDriverManager
 import com.project.mukchoice.manager.HttpWebClientManager
 import com.project.mukchoice.model.place.*
 import com.project.mukchoice.repository.PlaceRepository
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service
 class PlaceService(
     @Value("\${kakao.rest.api.key}") val kakaoRestApiKey: String,
     private val httpWebClientManager: HttpWebClientManager,
-    private val chromeDriverManager: ChromeDriverManager,
+    // private val chromeDriverManager: ChromeDriverManager,
     private val placeRepository: PlaceRepository,
 ) {
     companion object {

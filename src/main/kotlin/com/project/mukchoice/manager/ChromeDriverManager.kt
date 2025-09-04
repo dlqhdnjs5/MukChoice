@@ -1,3 +1,4 @@
+/*
 package com.project.mukchoice.manager
 
 import jakarta.annotation.PostConstruct
@@ -69,9 +70,11 @@ class ChromeDriverManager {
                 "--blink-settings=imagesEnabled=false", //이미지 다운 안받음
                 "--no-sandbox", // 샌드박스 비활성화
                  "--disable-dev-shm-usage", // /dev/shm 사용 비활성화
-                /* "--disable-extensions", // 확장 프로그램 비활성화
+                */
+/* "--disable-extensions", // 확장 프로그램 비활성화
                 "--disable-infobars", // 정보 표시줄 비활성화
-                "--disable-notifications" // 알림 비활성화*/
+                "--disable-notifications" // 알림 비활성화*//*
+
             )
         })
     }
@@ -99,4 +102,4 @@ class ChromeDriverManager {
             // Thread.sleep(200)
         }
     }
-}
+}*/
