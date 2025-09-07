@@ -20,7 +20,11 @@ class WebMvcConfig(
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
+        // 1단계(/abc)
         registry.addViewController("/{path:^(?!api|oauth|actuator|.*\\..*$).*$}")
+            .setViewName("forward:/index.html")
+        // 2단계 이상(/abc/def, /kakao-oauth/redirect 등)
+        registry.addViewController("/**/{path:^(?!api|oauth|actuator|.*\\..*$).*$}")
             .setViewName("forward:/index.html")
     }
 
