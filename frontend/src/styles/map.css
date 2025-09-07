@@ -1,0 +1,7 @@
+.kakao-map-large {
+    width: 100% !important;
+    min-width: 320px !important;
+    max-width: 1000px !important;
+    margin: 0 auto !important;
+    height: 350px !important;
+}

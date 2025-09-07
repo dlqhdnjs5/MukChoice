@@ -54,3 +54,11 @@ README_DEPLOY.md
 
 # GitHub Actions
 .github/
+
+
+# frontend
+/frontend/.env
+/frontend/.env.production.
+/node_modules/
+/frontend/dist/
+/frontend/node_modules/
