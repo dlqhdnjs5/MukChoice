@@ -121,7 +121,7 @@ class OauthService(
 
         KakaoTokenRequest(
             client_id = kakaoRestApiKey,
-            redirect_uri = "${globalPropertySource.baseUrl}:8080/${kakaoCallbackUrl}",
+            redirect_uri = "${globalPropertySource.baseUrl}/${kakaoCallbackUrl}", // TODO 안되면 다시 8080으로 바꿀것
             code = code
         ).let { request ->
             val headers = HttpHeaders().apply {
