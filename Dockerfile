@@ -9,7 +9,12 @@ RUN npm install -g pnpm && pnpm install
 
 # Copy frontend source and build
 COPY frontend/ ./
-RUN pnpm build
+
+# Copy .env.production file if it exists (for production build)
+COPY frontend/.env.production* ./
+
+# Build in production mode
+RUN pnpm build --mode production
 
 # Backend build stage
 FROM gradle:8.5-jdk21 AS backend-builder
