@@ -32,7 +32,6 @@ class OauthFacade(
     fun getKakaoAccessToken(code: String): String {
         val kakaoTokenResponse = oauthService.getKakaoAccessToken(code)
 
-        logger.info("please please please23: $kakaoTokenResponse")
         return kakaoTokenResponse.accessToken
     }
 
