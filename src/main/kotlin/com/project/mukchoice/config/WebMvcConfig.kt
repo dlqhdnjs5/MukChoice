@@ -24,8 +24,7 @@ class WebMvcConfig(
         registry.addViewController("/{path:^(?!api|oauth|actuator|.*\\..*$).*$}")
             .setViewName("forward:/index.html")
         // 2단계 이상(/abc/def, /kakao-oauth/redirect 등)
-        registry.addViewController("/**/{path:^(?!api|oauth|actuator|.*\\..*$).*$}")
-            .setViewName("forward:/index.html")
+
     }
 
     // 정적 리소스 핸들러 (통합 배포용)
