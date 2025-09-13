@@ -88,16 +88,15 @@ class PlaceFacade(
             return PlaceResponse(result)
         }
 
-        val allPlaces = mutableListOf<PlaceDto>()
-        for (category in categories) {
-            val places = placeService.getPlaces(coordinateX, coordinateY, category)
-            allPlaces.addAll(places)
-        }
-
-        val uniquePlaces = allPlaces.distinctBy { it.id }
-        uniquePlaces.forEach { place ->
-            place.isWish = wishService.existsWish(userInfo.userNo!!, place.id.toLong())
-        }
+        val uniquePlaces = categories.asSequence()
+            .flatMap { category ->
+                placeService.getPlaces(coordinateX, coordinateY, category).asSequence()
+            }
+            .distinctBy { it.id }
+            .onEach { place ->
+                place.isWish = wishService.existsWish(userInfo.userNo!!, place.id.toLong())
+            }
+            .toList()
 
         return PlaceResponse(uniquePlaces)
     }
