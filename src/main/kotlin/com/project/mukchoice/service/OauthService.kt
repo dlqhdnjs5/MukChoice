@@ -31,10 +31,10 @@ class OauthService(
     }
 
     fun getKakaoAccessToken(code: String): KakaoTokenResponse {
-            val kakaoTokenResponse = requestOauthToken(code)
-                ?: throw IllegalStateException("Kakao token response is null")
+        val kakaoTokenResponse = requestOauthToken(code)
+            ?: throw IllegalStateException("Kakao token response is null")
 
-            return kakaoTokenResponse
+        return kakaoTokenResponse
     }
 
     fun requestKakaoUserInfo(accessToken: String): KakaoUserResponse? {
