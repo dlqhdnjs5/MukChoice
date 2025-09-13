@@ -6,8 +6,6 @@ import com.project.mukchoice.model.oauth.KakaoLogoutResponse
 import com.project.mukchoice.model.oauth.KakaoTokenRequest
 import com.project.mukchoice.model.oauth.KakaoTokenResponse
 import com.project.mukchoice.model.oauth.KakaoUserResponse
-import jakarta.annotation.PostConstruct
-import jakarta.annotation.PreDestroy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -17,10 +15,6 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import java.time.LocalDateTime
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 @Service
 class OauthService(
