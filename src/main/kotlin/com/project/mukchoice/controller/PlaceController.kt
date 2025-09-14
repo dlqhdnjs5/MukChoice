@@ -71,7 +71,7 @@ class PlaceController(
             try {
                 PlaceCategory.valueOf(queryString)
             } catch (e: IllegalArgumentException) {
-                null // 잘못된 카테고리 이름은 무시
+                null
             }
         }
 

@@ -90,4 +90,29 @@ class WishService(
 
         return Pair(wishEntities, total)
     }
+
+    /**
+     * 여러 장소의 위시 정보를 한 번에 조회 (최적화된 메서드)
+     * @param placeIds 장소 ID 목록
+     * @param userNo 사용자 번호
+     * @return Map<placeId, Pair<totalCount, isUserWish>>
+     */
+    fun getWishInfoByPlaceIds(placeIds: List<Long>, userNo: Int): Map<Long, Pair<Int, Boolean>> {
+        if (placeIds.isEmpty()) {
+            return emptyMap()
+        }
+
+        val wishInfoList = wishRepository.getWishInfoByPlaceIds(placeIds, userNo)
+        val wishInfoMap = wishInfoList.associate { dto ->
+            dto.placeId to Pair(dto.totalCount, dto.isUserWish)
+        }.toMutableMap()
+
+        placeIds.forEach { placeId ->
+            if (!wishInfoMap.containsKey(placeId)) {
+                wishInfoMap[placeId] = Pair(0, false)
+            }
+        }
+
+        return wishInfoMap
+    }
 }

@@ -2,6 +2,7 @@ package com.project.mukchoice.repository
 
 import com.project.mukchoice.model.wish.WishDongInfoDto
 import com.project.mukchoice.model.wish.WishEntity
+import com.project.mukchoice.model.wish.WishInfoDto
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -120,5 +121,38 @@ class WishRepository(
         return entityManager.createQuery(query, java.lang.Long::class.java)
             .setParameter("userNo", userNo)
             .singleResult.toLong()
+    }
+
+    /**
+     * 여러 장소의 위시 정보를 한 번에 조회 (DTO 반환)
+     * @param placeIds 장소 ID 목록
+     * @param userNo 사용자 번호
+     * @return List<WishInfoDto>
+     */
+    fun getWishInfoByPlaceIds(placeIds: List<Long>, userNo: Int): List<WishInfoDto> {
+        if (placeIds.isEmpty()) return emptyList()
+
+        val query = """
+            SELECT w.placeId,
+                   COUNT(w.placeId) as totalCount,
+                   MAX(CASE WHEN w.userNo = :userNo THEN 1 ELSE 0 END) as isUserWish
+            FROM WishEntity w 
+            WHERE w.placeId IN :placeIds
+            GROUP BY w.placeId
+        """
+
+        val results = entityManager.createQuery(query)
+            .setParameter("placeIds", placeIds)
+            .setParameter("userNo", userNo)
+            .resultList
+
+        return results.map { result ->
+            val array = result as Array<*>
+            WishInfoDto(
+                placeId = (array[0] as Number).toLong(),
+                totalCount = (array[1] as Number).toInt(),
+                isUserWish = (array[2] as Number).toInt() > 0
+            )
+        }
     }
 }

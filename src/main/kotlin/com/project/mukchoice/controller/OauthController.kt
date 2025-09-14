@@ -30,21 +30,13 @@ class OauthController(
         @RequestParam("code") code: String, @RequestParam(value = "state", required = false) state: String?,
         response: HttpServletResponse
     ) {
-        logger.info("Kakao login callback received - code: $code, state: $state")
-
         try {
             val accessToken = oauthFacade.getKakaoAccessToken(code)
-            logger.info("Successfully got access token, redirecting to frontend...")
-
             val redirectUrl = "${globalPropertySource.frontendUrl}/kakao-oauth/redirect?accessToken=${accessToken}&state=${state}"
-            logger.info("Redirect URL: $redirectUrl")
-
             response.sendRedirect(redirectUrl)
-            logger.info("Redirect response sent successfully")
         } catch (e: IllegalStateException) {
             if (e.message?.contains("Duplicate authorization code request") == true) {
                 logger.info("Duplicate request ignored, no response sent")
-                // 중복 요청은 아무것도 하지 않음 (이미 첫 번째 요청에서 리다이렉트 완료)
                 return
             }
             logger.error("Error in kakaoLoginCallback", e)

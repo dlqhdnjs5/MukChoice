@@ -50,7 +50,6 @@ class GroupFacade(
         if (placeDtos.isEmpty()) {
             return GroupDetailResponse(
                 groupId = group.groupId!!,
-
                 groupName = group.groupName,
                 regTime = group.regTime!!,
                 modTime = group.modTime!!,
@@ -60,10 +59,14 @@ class GroupFacade(
                 placeCount = 0
             )
         }
-        placeDtos.apply {
-            forEach { place ->
-                place.isWish = wishService.existsWish(userNo, place.id.toLong())
-            }
+        val placeIds = placeDtos.map { it.id.toLong() }
+        val wishInfoMap = wishService.getWishInfoByPlaceIds(placeIds, userNo)
+
+        placeDtos.forEach { place ->
+            val placeId = place.id.toLong()
+            val wishInfo = wishInfoMap[placeId]!!
+            place.wishCount = wishInfo.first
+            place.isWish = wishInfo.second
         }
 
         return GroupDetailResponse(
