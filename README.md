@@ -19,6 +19,7 @@ https://mukchoice.kr
 ## 프로젝트 개요
 **Mukchoice**는 위치 기반으로 맛집을 추천하고, 그룹 관리와 랜덤 추천 기능을 통해 즐겁게 의사결정을 지원하는 서비스입니다.  
 프론트엔드와 백엔드를 완전히 분리하고, Docker 기반 배포 파이프라인을 구축하여 운영 환경에서도 안정성을 확보했습니다.  
+평소 스터디를 하며 신기하고 재밌는 기능을 채워나갈 예정입니다.
 
 ---
 
@@ -33,6 +34,23 @@ https://mukchoice.kr
 
 <img src="https://github.com/user-attachments/assets/7ecdbb55-ab8f-4c98-b128-609373973484" width="300" height="500" />
 <img src="https://github.com/user-attachments/assets/8a68a834-3ba6-458a-8f1c-9353a9dd8fee" width="300" height="500" />
+
+### 위시리스트
+
+**전체 및 지역별 위시리스트 관리, 랜덤 초이스**
+
+<img src="https://github.com/user-attachments/assets/24fb3836-476c-4e47-96f2-ffad9d5f37fd" width="300" height="500" />
+
+
+### 그룹
+그룹별로 맛집을 관리할 수 있으며 카카오 공유하기를 통해 그룹에 초대하여 맛집을 공유할 수 있습니다.
+
+
+**그룹 초대**
+
+
+<img width="400" height="350" alt="image" src="https://github.com/user-attachments/assets/b672d318-b9f5-4d5f-984f-da73876e4559" />
+<img width="278" height="383" alt="image" src="https://github.com/user-attachments/assets/05e79faf-57a5-461f-9acb-96ce04a3e655" />
 
 ---
 
