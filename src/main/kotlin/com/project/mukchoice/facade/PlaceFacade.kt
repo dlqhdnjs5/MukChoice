@@ -58,19 +58,22 @@ class PlaceFacade(
      */
     fun getPlacesWithQuery(coordinateX: String, coordinateY: String, query: String): PlaceResponse {
         val userInfo = ContextHolder.getUserInfoWithCheck()
-        placeService.searchPlacesWithQuery(coordinateX, coordinateY, query)
+        val places = placeService.searchPlacesWithQuery(coordinateX, coordinateY, query)
             .map { PlaceDto.fromDocument(it) }
-            .let { places ->
-                if (places.isEmpty()) {
-                    return PlaceResponse(emptyList())
-                }
 
-                places.forEach { place ->
-                    place.isWish = wishService.existsWish(userInfo.userNo!!, place.id.toLong())
-                }
+        if (places.isEmpty()) {
+            return PlaceResponse(emptyList())
+        }
 
-                return PlaceResponse(places)
-            }
+        val placeIds = places.map { it.id.toLong() }
+        val wishInfoMap = wishService.getWishInfoByPlaceIds(placeIds, userInfo.userNo!!)
+        places.forEach { place ->
+            val wishInfo = wishInfoMap[place.id.toLong()]!!
+            place.wishCount = wishInfo.first
+            place.isWish = wishInfo.second
+        }
+
+        return PlaceResponse(places)
     }
 
     fun getPlacesMultiCategory(
@@ -93,10 +96,15 @@ class PlaceFacade(
                 placeService.getPlaces(coordinateX, coordinateY, category).asSequence()
             }
             .distinctBy { it.id }
-            .onEach { place ->
-                place.isWish = wishService.existsWish(userInfo.userNo!!, place.id.toLong())
-            }
             .toList()
+
+        val placeIds = uniquePlaces.map { it.id.toLong() }
+        val wishInfoMap = wishService.getWishInfoByPlaceIds(placeIds, userInfo.userNo!!)
+        uniquePlaces.forEach { place ->
+            val wishInfo = wishInfoMap[place.id.toLong()]!!
+            place.wishCount = wishInfo.first
+            place.isWish = wishInfo.second
+        }
 
         return PlaceResponse(uniquePlaces)
     }
