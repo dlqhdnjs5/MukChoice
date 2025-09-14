@@ -25,10 +25,13 @@ https://mukchoice.kr
 
 ## 기능 소개
 ### 로그인
+빠르고 편리하게 카카오 소셜 로그인을 통해 계정을 관리합니다.
 
 <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/e3a11b57-6e6e-4bb1-8cd7-e45b0c43826c" />
 
+
 ### 홈
+2km 내 맛집을 검색할 수 있으며 카테고리별 1km 내 맛집을 탐방해보며 랜덤 초이스를 해보실 수 있습니다. 
 
 **검색결과, 카테고리별 랜덤 초이스**
 
@@ -36,21 +39,41 @@ https://mukchoice.kr
 <img src="https://github.com/user-attachments/assets/8a68a834-3ba6-458a-8f1c-9353a9dd8fee" width="300" height="500" />
 
 ### 위시리스트
+원하는 맛집을 위시리스트에 저장해두고, 랜덤 초이스로 즐겁게 선택하세요. 지역별 랜덤 초이스 기능도 지원합니다.
 
 **전체 및 지역별 위시리스트 관리, 랜덤 초이스**
+
 
 <img src="https://github.com/user-attachments/assets/24fb3836-476c-4e47-96f2-ffad9d5f37fd" width="300" height="500" />
 
 
 ### 그룹
-그룹별로 맛집을 관리할 수 있으며 카카오 공유하기를 통해 그룹에 초대하여 맛집을 공유할 수 있습니다.
+원하는 맛집을 그룹으로 관리해 보세요.
+
+**그룹내 랜덤 초이스**
+
+<img width="400" height="350" alt="image" src="https://github.com/user-attachments/assets/e0929fee-740e-4ba0-aeb1-dc705aa374a0" />
+<img width="400" height="350" alt="image" src="https://github.com/user-attachments/assets/fc374116-0616-4669-8e43-8197db420e1f" />
+
+
+
+<br/>
+<br/>
 
 
 **그룹 초대**
 
+카카오 공유하기를 통해 그룹에 초대하여 맛집을 공유할 수 있습니다.
 
 <img width="400" height="350" alt="image" src="https://github.com/user-attachments/assets/b672d318-b9f5-4d5f-984f-da73876e4559" />
 <img width="278" height="383" alt="image" src="https://github.com/user-attachments/assets/05e79faf-57a5-461f-9acb-96ce04a3e655" />
+
+
+### 마이페이지
+마이페이지에서 소셜로그인 로그아웃이 가능합니다.
+
+**로그아웃**
+<img width="300" height="500" alt="image" src="https://github.com/user-attachments/assets/51b47ebb-a304-4d98-8142-54ddc93bf603" />
 
 ---
 
