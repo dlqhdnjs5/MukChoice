@@ -22,6 +22,7 @@ data class PlaceDto(
     val isEnd: Boolean? = null,
     var placeCategory: PlaceCategory? = null,
     var isWish: Boolean? = null,
+    var wishCount: Int? = null, // 총 위시 개수 필드 추가
 ) {
     companion object {
         fun fromDocument(document: Document): PlaceDto {
@@ -79,7 +80,8 @@ data class PlaceDto(
                 totalCount = null,
                 isEnd = null,
                 placeCategory = entity.placeCategory,
-                isWish = null
+                isWish = null,
+                wishCount = null // 위시 개수 초기화
             )
         }
     }
