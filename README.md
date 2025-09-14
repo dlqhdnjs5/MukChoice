@@ -3,6 +3,8 @@
 
 
 # 먹초이스 - 위치 기반 맛집 추천 서비스
+https://mukchoice.kr
+
 2025.06.01~ 2025.09.14
 
 프로젝트 인원: 이보원
@@ -20,11 +22,15 @@
 
 ---
 
-## 🖼️ 스크린샷
-| 메인 화면 | 지도 기반 추천 | 랜덤 셔플 |
-|-----------|----------------|------------|
-| ![메인화면](https://source.unsplash.com/600x400/?restaurant,app) | ![지도기반](https://source.unsplash.com/600x400/?map,korea) | ![랜덤추천](https://source.unsplash.com/600x400/?food,random) |
+## 🖼️ 기능 소개
+**로그인**
 
+<img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/e3a11b57-6e6e-4bb1-8cd7-e45b0c43826c" />
+
+**홈**
+카테고리별 랜덤 초이스
+
+<img src="https://github.com/user-attachments/assets/7ecdbb55-ab8f-4c98-b128-609373973484" width="300" height="500" />
 ---
 
 ## 🔧 Backend
