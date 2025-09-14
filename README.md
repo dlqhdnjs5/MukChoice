@@ -79,8 +79,37 @@ https://mukchoice.kr
 
 <img width="300" height="500" alt="image" src="https://github.com/user-attachments/assets/51b47ebb-a304-4d98-8142-54ddc93bf603" />
 
+
 ---
 
+## 구조도
+
+### 런타임 네트워크/포트 흐름
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Client (Browser/Mobile)
+    participant NG as Nginx (443, TLS Termination)
+    participant FE as Frontend Server (:3000)
+    participant BE as Backend (Spring Boot, :8080)
+
+    C->>NG: HTTPS GET /
+    NG->>FE: proxy http://127.0.0.1:3000/ (frontend)
+    FE-->>NG: HTML/CSS/JS
+    NG-->>C: 200 OK (TLS)
+
+    C->>NG: HTTPS XHR /api/...
+    NG->>BE: proxy http://127.0.0.1:8080/ (backend)
+    BE-->>NG: JSON
+    NG-->>C: 200 OK (TLS)
+```
+
+
+
+
+
+---
 ## 🔧 Backend
 - Kotlin (Spring Boot)
 - MariaDB (10.11 LTS), Hibernate/JPA
