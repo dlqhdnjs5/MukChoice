@@ -15,9 +15,6 @@ class GroupInvitationEntity(
     @Column(name = "inviter_user_no", nullable = false)
     val inviterUserNo: Int,
 
-    @Column(name = "invitee_user_no", nullable = true)
-    var inviteeUserNo: Int?,
-
     @Column(name = "group_id", nullable = false)
     val groupId: Long,
 
@@ -35,13 +32,11 @@ class GroupInvitationEntity(
     constructor(
         id: String,
         inviterUserNo: Int,
-        inviteeUserNo: Int,
         groupId: Long,
         status: Boolean
     ) : this(
         id = id,
         inviterUserNo = inviterUserNo,
-        inviteeUserNo = inviteeUserNo,
         groupId = groupId,
         status = status,
         regTime = null,

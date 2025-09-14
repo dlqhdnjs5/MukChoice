@@ -27,7 +27,6 @@ class GroupInvitationService(
         val invitation = GroupInvitationEntity(
             id = invitationId,
             inviterUserNo = userNo!!,
-            inviteeUserNo = request.inviteeUserNo,
             groupId = request.groupId,
             status = false
         )
@@ -37,7 +36,6 @@ class GroupInvitationService(
         return GroupInvitationResponse(
             id = savedInvitation.id,
             inviterUserNo = savedInvitation.inviterUserNo,
-            inviteeUserNo = savedInvitation.inviteeUserNo,
             groupId = savedInvitation.groupId,
             status = savedInvitation.status,
             regTime = savedInvitation.regTime,
@@ -50,21 +48,6 @@ class GroupInvitationService(
             GroupInvitationResponse(
                 id = invitation.id,
                 inviterUserNo = invitation.inviterUserNo,
-                inviteeUserNo = invitation.inviteeUserNo,
-                groupId = invitation.groupId,
-                status = invitation.status,
-                regTime = invitation.regTime,
-                modTime = invitation.modTime
-            )
-        }
-    }
-
-    fun getInvitationsByInviteeUserNo(inviteeUserNo: Int): List<GroupInvitationResponse> {
-        return groupInvitationRepository.findByInviteeUserNo(inviteeUserNo).map { invitation ->
-            GroupInvitationResponse(
-                id = invitation.id,
-                inviterUserNo = invitation.inviterUserNo,
-                inviteeUserNo = invitation.inviteeUserNo,
                 groupId = invitation.groupId,
                 status = invitation.status,
                 regTime = invitation.regTime,
@@ -78,13 +61,6 @@ class GroupInvitationService(
         val invitation = groupInvitationRepository.findById(invitationId)
             .orElseThrow { IllegalArgumentException("그룹 초대를 찾을 수 없습니다. ID: $invitationId") }
 
-        if (invitation.inviteeUserNo != null) {
-            return
-        }
-
-        invitation.status = true
-
-        invitation.inviteeUserNo = userNo
         val userGroupId = UserGroupId(
             userNo = userNo,
             groupId = invitation.groupId
@@ -97,6 +73,9 @@ class GroupInvitationService(
                 groupId = invitation.groupId
             )
             userGroupRepository.save(userGroupEntity)
+
+            invitation.status = true
         }
     }
 }
+

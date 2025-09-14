@@ -93,18 +93,6 @@ class GroupController(
     ): List<GroupInvitationResponse> {
         return groupInvitationService.getInvitationsByGroupId(groupId)
     }
-
-    /**
-     * 특정 사용자가 받은 초대 목록을 조회하는 API
-     * @param inviteeUserNo 초대받은 사용자 번호
-     * @return List<GroupInvitationResponse> 해당 사용자가 받은 초대 목록
-     */
-    @GetMapping("/invitations/user/{inviteeUserNo}")
-    fun getUserInvitations(
-        @PathVariable inviteeUserNo: Int
-    ): List<GroupInvitationResponse> {
-        return groupInvitationService.getInvitationsByInviteeUserNo(inviteeUserNo)
-    }
 }
 
 
