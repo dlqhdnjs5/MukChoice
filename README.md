@@ -14,7 +14,7 @@ https://mukchoice.kr
 > 점심시간, 데이트, 친구와의 자리에서 뭘먹을지 고민될땐 먹초이스에게 선택을 맡겨보세요!
  <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/f81d1a02-ce0f-42ed-85d1-d6e03371b748" />
  
-(모바일 퍼스트로 모바일에서도 즐길 수 있습니다.)
+(모바일에서도 즐길 수 있습니다.)
 
 ---
 
