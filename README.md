@@ -16,21 +16,24 @@ https://mukchoice.kr
 
 ---
 
-## 📌 프로젝트 개요
+## 프로젝트 개요
 **Mukchoice**는 위치 기반으로 맛집을 추천하고, 그룹 관리와 랜덤 추천 기능을 통해 즐겁게 의사결정을 지원하는 서비스입니다.  
 프론트엔드와 백엔드를 완전히 분리하고, Docker 기반 배포 파이프라인을 구축하여 운영 환경에서도 안정성을 확보했습니다.  
 
 ---
 
-## 🖼️ 기능 소개
-**로그인**
+## 기능 소개
+### 로그인
 
 <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/e3a11b57-6e6e-4bb1-8cd7-e45b0c43826c" />
 
-**홈**
-카테고리별 랜덤 초이스
+### 홈
+
+**검색결과, 카테고리별 랜덤 초이스**
 
 <img src="https://github.com/user-attachments/assets/7ecdbb55-ab8f-4c98-b128-609373973484" width="300" height="500" />
+<img src="https://github.com/user-attachments/assets/8a68a834-3ba6-458a-8f1c-9353a9dd8fee" width="300" height="500" />
+
 ---
 
 ## 🔧 Backend
@@ -47,7 +50,7 @@ https://mukchoice.kr
 
 ---
 
-## 🎨 Frontend
+## Frontend
 - React 18 + TypeScript
 - MobX (상태 관리), React Query (서버 상태 관리)
 - Tailwind CSS
@@ -62,7 +65,7 @@ https://mukchoice.kr
 
 ---
 
-## 🚀 배포 및 운영
+## 배포 및 운영
 - 스크립트를 이용한 한번의 명령어로 로컬 빌드 → Docker Hub 푸시 → 서버에서 Pull & Compose 실행하여 배포.
 - Backend/Frontend 컨테이너 분리
 - Nginx Reverse Proxy로 라우팅
@@ -70,7 +73,7 @@ https://mukchoice.kr
 
 ---
 
-## 💡 기술적 의의
+## 기술적 의의
 - 프론트·백 분리 아키텍처 운영 경험
 - OAuth 기반 인증/인가 직접 구현
 - MobX + React Query 조합 활용
