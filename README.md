@@ -25,6 +25,67 @@ https://mukchoice.kr
 
 ---
 
+
+
+## 🚀 Backend
+**Languages**
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
+![Java](https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white)
+
+**Frameworks & ORM**
+![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=springboot&logoColor=white)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=flat&logo=hibernate&logoColor=white)
+![JPA](https://img.shields.io/badge/JPA-59666C?style=flat&logoColor=white)
+
+**Database**
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=flat&logo=mariadb&logoColor=white)
+
+**Build Tool**
+![Gradle](https://img.shields.io/badge/Gradle-02303A?style=flat&logo=gradle&logoColor=white)
+
+**Auth**
+![OAuth](https://img.shields.io/badge/OAuth-3E8EDE?style=flat&logo=oauth&logoColor=white)
+![Kakao](https://img.shields.io/badge/Kakao%20Login-FFCD00?style=flat&logo=kakao&logoColor=000000)
+
+**주요 기능**
+- 사용자/위시리스트/그룹/맛집 데이터 관리 REST API
+- OAuth 2.0 카카오 로그인 인증/인가
+- JPA 기반 데이터 모델링 및 CRUD
+
+
+
+---
+
+## 🎨 Frontend
+**Core**
+![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+
+**State Management**
+![MobX](https://img.shields.io/badge/MobX-FF9955?style=flat&logo=mobx&logoColor=white)
+![React Query](https://img.shields.io/badge/React%20Query-FF4154?style=flat&logo=reactquery&logoColor=white)
+
+**Styling**
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+
+**Build Tool**
+![pnpm](https://img.shields.io/badge/pnpm-F69220?style=flat&logo=pnpm&logoColor=white)
+
+**External APIs**
+![Kakao Map](https://img.shields.io/badge/KakaoMap-FFCD00?style=flat&logo=kakao&logoColor=000000)
+![KakaoTalk](https://img.shields.io/badge/KakaoTalk-FFCD00?style=flat&logo=kakaotalk&logoColor=000000)
+
+**주요 기능**
+- 🏠 그룹 관리: 생성/조회/상세 (최대 15개), 그룹장 권한(👑), 멤버 초대, 카카오톡 초대
+- 📍 위치 기반: 현재 위치 기반 맛집 추천, 실시간 지도 마커 표시, 검색 및 선택
+- 🎲 랜덤 추천: 셔플 애니메이션, 카드-지도 연동, 부드러운 트랜지션
+- 🎨 UI/UX: 반응형 모달, 로딩/에러 처리, 카드형 리스트, 직관적 버튼 인터랙션
+
+
+
+
+---
+
 ## 기능 소개
 ### 로그인
 빠르고 편리하게 카카오 소셜 로그인을 통해 계정을 관리합니다.
@@ -105,37 +166,6 @@ sequenceDiagram
     NG-->>C: 200 OK (TLS)
 ```
 
-
-
-
-
----
-## 🔧 Backend
-- Kotlin (Spring Boot)
-- MariaDB (10.11 LTS), Hibernate/JPA
-- Gradle 빌드
-- OAuth (카카오 로그인)
-
-
-**주요 기능**
-- 사용자/위시리스트/그룹/맛집 데이터 관리 REST API
-- OAuth 2.0 카카오 로그인 인증/인가
-- JPA 기반 데이터 모델링 및 CRUD
-
----
-
-## Frontend
-- React 18 + TypeScript
-- MobX (상태 관리), React Query (서버 상태 관리)
-- Tailwind CSS
-- pnpm 빌드
-- KakaoMap SDK, KakaoTalk SDK
-
-**주요 기능**
-- 🏠 그룹 관리: 생성/조회/상세 (최대 15개), 그룹장 권한(👑), 멤버 초대, 카카오톡 초대
-- 📍 위치 기반: 현재 위치 기반 맛집 추천, 실시간 지도 마커 표시, 검색 및 선택
-- 🎲 랜덤 추천: 셔플 애니메이션, 카드-지도 연동, 부드러운 트랜지션
-- 🎨 UI/UX: 반응형 모달, 로딩/에러 처리, 카드형 리스트, 직관적 버튼 인터랙션
 
 ---
 
