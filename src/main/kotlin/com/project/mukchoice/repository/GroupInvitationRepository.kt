@@ -9,9 +9,5 @@ interface GroupInvitationRepository : JpaRepository<GroupInvitationEntity, Strin
 
     fun findByGroupIdAndInviterUserNo(groupId: Long, inviterUserNo: Int): List<GroupInvitationEntity>
 
-    fun findByInviteeUserNo(inviteeUserNo: Int): List<GroupInvitationEntity>
-
     fun findByGroupId(groupId: Long): List<GroupInvitationEntity>
-
-
 }
