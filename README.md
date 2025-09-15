@@ -30,7 +30,7 @@ https://mukchoice.kr
 ## 🚀 Backend
 **Languages**
 ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
-![Java](https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white)
+
 
 **Frameworks & ORM**
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=springboot&logoColor=white)
@@ -42,6 +42,9 @@ https://mukchoice.kr
 
 **Build Tool**
 ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=flat&logo=gradle&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker_Compose-2496ED?style=flat&logo=docker&logoColor=white)
+
 
 **Auth**
 ![OAuth](https://img.shields.io/badge/OAuth-3E8EDE?style=flat&logo=oauth&logoColor=white)
@@ -178,6 +181,7 @@ sequenceDiagram
 ---
 
 ## 기술적 의의
+- Kotlin + JPA/Hibernate 을 이용한 백엔드 구.
 - 프론트·백 분리 아키텍처 운영 경험
 - OAuth 기반 인증/인가 직접 구현
 - MobX + React Query 조합 활용
