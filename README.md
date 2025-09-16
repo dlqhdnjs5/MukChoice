@@ -12,8 +12,8 @@ https://mukchoice.kr
 > **“내 위치와 그룹 친구들과 함께, 랜덤으로 즐기는 맛집 선택의 재미”**
 > 
 > 점심시간, 데이트, 친구와의 자리에서 뭘먹을지 고민될땐 먹초이스에게 선택을 맡겨보세요!
- <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/f81d1a02-ce0f-42ed-85d1-d6e03371b748" />
- 
+ <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/098dd4fb-74d5-4e9a-9fca-289b6c3671ad" />
+
 (모바일에서도 즐길 수 있습니다.)
 
 ---
