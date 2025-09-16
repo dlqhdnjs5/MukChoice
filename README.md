@@ -185,7 +185,8 @@ sequenceDiagram
 ---
 
 ## 기술적 의의
-- Kotlin + JPA/Hibernate 을 이용한 백엔드 구.
+- 서버 환경 구축 ~ 어플리케이션 배포 자동화까지의 경험.
+- Kotlin + JPA/Hibernate 을 이용한 백엔드 구현.
 - 프론트·백 분리 아키텍처 운영 경험
 - OAuth 기반 인증/인가 직접 구현
 - MobX + React Query 조합 활용
