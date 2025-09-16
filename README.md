@@ -146,9 +146,13 @@ https://mukchoice.kr
 
 ---
 
-## 구조도
+## 아키텍처
 
-### 런타임 네트워크/포트 흐름
+### 서비스 시스템 인프라 아키텍처
+<img width="1970" height="1013" alt="image" src="https://github.com/user-attachments/assets/333eb8d5-905b-4db3-add0-ad843b3ebcd1" />
+
+
+### 런타임 네트워크/포트 아키텍처
 
 ```mermaid
 sequenceDiagram
@@ -158,7 +162,7 @@ sequenceDiagram
     participant FE as Frontend Server (:3000)
     participant BE as Backend (Spring Boot, :8080)
 
-    C->>NG: HTTPS GET /
+    C->>NG: HTTPS GET/POST/...
     NG->>FE: proxy http://127.0.0.1:3000/ (frontend)
     FE-->>NG: HTML/CSS/JS
     NG-->>C: 200 OK (TLS)
