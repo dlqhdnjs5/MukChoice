@@ -3,11 +3,9 @@ package com.project.mukchoice.service
 import com.project.mukchoice.model.group.*
 import com.project.mukchoice.model.user.UserDto
 import com.project.mukchoice.model.place.PlaceDto
-import com.project.mukchoice.model.place.PlaceResponse
 import com.project.mukchoice.repository.GroupRepository
 import com.project.mukchoice.repository.UserGroupRepository
 import com.project.mukchoice.repository.GroupPlaceRepository
-import com.project.mukchoice.repository.PlaceRepository
 import com.project.mukchoice.util.ContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -179,6 +177,32 @@ class GroupService(
             placeCount = places.size
         )
     }
+
+    @Transactional
+    fun leaveGroup(groupId: Long) {
+        val userDto = ContextHolder.getUserInfoWithCheck()
+        val userNo = userDto.userNo!!
+
+        groupRepository.findById(groupId)
+            ?: throw IllegalArgumentException("존재하지 않는 그룹입니다.")
+
+        val userGroupId = UserGroupId(userNo, groupId)
+        val userGroup: UserGroupEntity = userGroupRepository.findById(userGroupId)
+            ?: throw IllegalArgumentException("그룹에 속하지 않은 사용자입니다.")
+
+        if (userGroup.isOwner) {
+            val nextOwner: UserGroupEntity? = userGroupRepository.findFirstNonOwnerByGroupId(groupId)
+
+            if (nextOwner != null) {
+                nextOwner.isOwner = true
+                userGroupRepository.deleteById(userGroup)
+            } else {
+                userGroupRepository.deleteById(userGroup)
+                groupPlaceRepository.deleteByGroupId(groupId)
+                groupRepository.deleteById(groupId)
+            }
+        } else {
+            userGroupRepository.deleteById(userGroup)
+        }
+    }
 }
-
-

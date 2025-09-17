@@ -80,4 +80,8 @@ class GroupFacade(
             placeCount = placeDtos.size
         )
     }
+
+    fun leaveGroup(groupId: Long) {
+        groupService.leaveGroup(groupId)
+    }
 }
