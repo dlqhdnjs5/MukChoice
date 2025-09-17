@@ -93,6 +93,16 @@ class GroupController(
     ): List<GroupInvitationResponse> {
         return groupInvitationService.getInvitationsByGroupId(groupId)
     }
+
+    /**
+     * 그룹에서 나가는 API
+     * 그룹장은 탈퇴할 수 없으며, 일반 멤버만 탈퇴 가능
+     * @param groupId 탈퇴할 그룹 ID
+     */
+    @DeleteMapping("/{groupId}/members")
+    fun leaveGroup(
+        @PathVariable groupId: Long
+    ) {
+        groupFacade.leaveGroup(groupId)
+    }
 }
-
-
