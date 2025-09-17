@@ -76,4 +76,11 @@ class GroupRepository(
         query.setParameter("groupId", groupId)
         return query.resultList.firstOrNull()
     }
+
+    fun deleteById(groupId: Long) {
+        val entity = findById(groupId)
+        if (entity != null) {
+            entityManager.remove(entity)
+        }
+    }
 }

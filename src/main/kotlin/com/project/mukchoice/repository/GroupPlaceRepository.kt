@@ -45,5 +45,11 @@ class GroupPlaceRepository(
         query.setParameter("groupId", groupId)
         return query.resultList
     }
-}
 
+    fun deleteByGroupId(groupId: Long) {
+        val jpql = "DELETE FROM GroupPlaceEntity gp WHERE gp.groupId = :groupId"
+        val query = entityManager.createQuery(jpql)
+        query.setParameter("groupId", groupId)
+        query.executeUpdate()
+    }
+}

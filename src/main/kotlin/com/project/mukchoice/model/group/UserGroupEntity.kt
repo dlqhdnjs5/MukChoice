@@ -17,7 +17,7 @@ class UserGroupEntity(
     val groupId: Long,
 
     @Column(name = "is_owner", nullable = false)
-    val isOwner: Boolean = false,
+    var isOwner: Boolean = false,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_no", referencedColumnName = "user_no", insertable = false, updatable = false)

@@ -39,4 +39,16 @@ class UserGroupRepository(
         query.setParameter("groupId", groupId)
         return query.resultList.firstOrNull()
     }
+
+    fun deleteById(userGroupEntity: UserGroupEntity) {
+        entityManager.remove(userGroupEntity)
+    }
+
+    fun findFirstNonOwnerByGroupId(groupId: Long): UserGroupEntity? {
+        val jpql = "SELECT ug FROM UserGroupEntity ug WHERE ug.groupId = :groupId AND ug.isOwner = false"
+        val query = entityManager.createQuery(jpql, UserGroupEntity::class.java)
+        query.maxResults = 1
+        query.setParameter("groupId", groupId)
+        return query.resultList.firstOrNull()
+    }
 }
