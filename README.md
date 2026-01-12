@@ -28,7 +28,7 @@ https://mukchoice.kr
 
 
 
-## 🚀 Backend
+## Backend
 **Languages**
 ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
 
@@ -60,7 +60,7 @@ https://mukchoice.kr
 
 ---
 
-## 🎨 Frontend
+## Frontend
 **Core**
 ![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
@@ -80,10 +80,10 @@ https://mukchoice.kr
 ![KakaoTalk](https://img.shields.io/badge/KakaoTalk-FFCD00?style=flat&logo=kakaotalk&logoColor=000000)
 
 **주요 기능**
-- 🏠 그룹 관리: 생성/조회/상세 (최대 15개), 그룹장 권한(👑), 멤버 초대, 카카오톡 초대
-- 📍 위치 기반: 현재 위치 기반 맛집 추천, 실시간 지도 마커 표시, 검색 및 선택
-- 🎲 랜덤 추천: 셔플 애니메이션, 카드-지도 연동, 부드러운 트랜지션
-- 🎨 UI/UX: 반응형 모달, 로딩/에러 처리, 카드형 리스트, 직관적 버튼 인터랙션
+- 그룹 관리: 생성/조회/상세 (최대 15개), 그룹장 권한, 멤버 초대, 카카오톡 초대
+- 위치 기반: 현재 위치 기반 맛집 추천, 실시간 지도 마커 표시, 검색 및 선택
+- 랜덤 추천: 셔플 애니메이션, 카드-지도 연동, 부드러운 트랜지션
+- UI/UX: 반응형 모달, 로딩/에러 처리, 카드형 리스트, 직관적 버튼 인터랙션
 
 
 
