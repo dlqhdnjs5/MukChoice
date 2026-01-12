@@ -193,3 +193,8 @@ sequenceDiagram
 - MobX + React Query 조합 활용
 - Docker 기반 자동화 배포
 - 위치 기반 서비스 + 랜덤 추천 경험
+
+## 추후 개선 방향
+- AI를 이용한 고도화
+ - RAG 도입을 chat bot기능 개발
+ - Langchain Agent 개발로 대화를 통한 action 수행 기능 개발 
